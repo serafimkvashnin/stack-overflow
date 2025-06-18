@@ -7,7 +7,8 @@
 >
   <head>
     <title>
-      c# - StreamWriter help (1) - Stack Overflow на русском
+      c# - Store Medicine with StreamWriter in C# (5) - Stack Overflow на
+      русском
     </title>
     <link
       rel="shortcut icon"
@@ -69,7 +70,7 @@
       name="twitter:title"
       property="og:title"
       itemprop="name"
-      content="StreamWriter help (1)"
+      content="Store Medicine with StreamWriter in C# (5)"
     />
     <meta
       name="twitter:description"
@@ -107,7 +108,7 @@ namespace Task_1
     <link
       rel="alternate"
       type="application/atom+xml"
-      title="Лента для вопроса «StreamWriter help (1)»"
+      title="Лента для вопроса «Store Medicine with StreamWriter in C# (5)»"
       href="/feeds/question/1614028"
     />
     <script
@@ -6043,7 +6044,7 @@ namespace Task_1
                 <a
                   href="/questions/1614028/%d0%97%d0%b0%d1%8f%d0%b2%d0%ba%d0%b8-%d0%bd%d0%b0-%d0%ba%d0%b0%d0%bd%d1%86%d1%82%d0%be%d0%b2%d0%b0%d1%80%d1%8b-%d0%bf%d0%be-%d0%be%d1%82%d0%b4%d0%b5%d0%bb%d0%b0%d0%bc-1"
                   class="question-hyperlink"
-                  >StreamWriter help (1)</a
+                  >Store Medicine with StreamWriter in C# (5)</a
                 >
               </h1>
 
@@ -6282,263 +6283,330 @@ namespace Task_1
                     <div class="s-prose js-post-body" itemprop="text">
                       <p>Код для Form1.cs</p>
 <pre><code>
-namespace Task_1
+using System.Text.Json;
+using System.Xml.Linq;
+
+namespace AnyaTask5
 {
     public partial class Form1 : Form
     {
-        public Dictionary<string, Zayavka> spisok;
-        private Dictionary<string, int> globalItems = new Dictionary<string, int>();
+        private List<Medicine> medicines = new List<Medicine>();
+        private string filePath = "medicines.txt";
+        private string departmentName = "Отделение терапии";
 
         public Form1()
         {
-            spisok = new Dictionary<string, Zayavka>();
             InitializeComponent();
+            LoadMedicines();
+            UpdateMedicineList();
+            lblDepartment.Text = departmentName;
         }
 
-        private void Form1_Load(object sender, EventArgs e)
+        private void LoadMedicines()
         {
-
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            DialogResult dialogResult = openFileDialog.ShowDialog();
-            if (dialogResult == DialogResult.OK)
+            if (File.Exists(filePath))
             {
-                string[] line = File.ReadAllLines(openFileDialog.FileName);
-                string NameOtdel = line[0];
-                if (spisok.ContainsKey(NameOtdel))
+                string[] lines = File.ReadAllLines(filePath);
+                foreach (string line in lines)
                 {
-                    MessageBox.Show("Заявка уже была обработана");
+                    string[] med = line.Split("-", StringSplitOptions.TrimEntries);
+                    Medicine me = new Medicine();
+                    me.Name = med[0];
+                    me.Quantity = int.Parse(med[1]);
+                    medicines.Add(me);
+                }
+
+                UpdateMedicineList();
+            }
+        }
+
+        private void SaveMedicines()
+        {
+            using (StreamWriter writer = new StreamWriter(filePath))
+            {
+                foreach (var med in medicines)
+                {
+                    writer.WriteLine(med);
+                }
+            }
+            MessageBox.Show("Список лекарств сохранён");
+        }
+
+        private void UpdateMedicineList()
+        {
+            listBoxAll.Items.Clear();
+            listBoxZero.Items.Clear();
+
+            foreach (var med in medicines)
+            {
+                listBoxAll.Items.Add(med);
+                if (med.Quantity == 0)
+                    listBoxZero.Items.Add(med);
+            }
+        }
+
+        private void btnAdd_Click(object sender, EventArgs e)
+        {
+            string name = txtName.Text.Trim();
+            if (!int.TryParse(txtQuantity.Text, out int quantity)) return;
+
+            var existing = medicines.FirstOrDefault(m => m.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+            if (existing != null)
+                existing.Quantity += quantity;
+            else
+                medicines.Add(new Medicine { Name = name, Quantity = quantity });
+
+            UpdateMedicineList();
+        }
+
+        private void btnRemove_Click(object sender, EventArgs e)
+        {
+            if (listBoxAll.SelectedItem is Medicine selected)
+            {
+                medicines.Remove(selected);
+                UpdateMedicineList();
+            }
+        }
+
+        private void btnDecrement_Click(object sender, EventArgs e)
+        {
+            if (listBoxAll.SelectedItem is Medicine selected &&
+                int.TryParse(txtQuantity.Text, out int amount))
+            {
+                if (selected.Quantity < amount)
+                {
+                    MessageBox.Show("Недостаточно лекарств на складе");
                     return;
                 }
-                Zayavka zayavka = new Zayavka();
-                zayavka.NameOtdel = NameOtdel;
-                for (int i = 1; i < line.Length; i++)
-                {
-                    string[] parts = line[i].Split("-");
-                    string NameTovar = parts[0];
-                    int TovarCount = int.Parse(parts[1]);
-                    zayavka.tovari[NameTovar] = TovarCount;
 
-                    if (globalItems.ContainsKey(NameTovar))
-                        globalItems[NameTovar] += TovarCount;
-                    else
-                        globalItems[NameTovar] = TovarCount;
-                }
-                spisok[zayavka.NameOtdel] = zayavka;
-                RefreshOtdelList();
-                RefreshGlobalList();
+                selected.Quantity -= amount;
+                UpdateMedicineList();
             }
         }
 
-        private void RefreshOtdelList()
+        private void btnEdit_Click(object sender, EventArgs e)
         {
-            listBox1.Items.Clear();
-            listBox1.Items.AddRange(spisok.Keys.ToArray());
-        }
-
-        private void RefreshGlobalList()
-        {
-            listBox3.Items.Clear();
-            foreach (var item in globalItems)
+            if (listBoxAll.SelectedItem is Medicine selected)
             {
-                listBox3.Items.Add($"{item.Key} - {item.Value}");
-            }
-        }
-
-        private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            listBox2.Items.Clear();
-
-            if (listBox1.SelectedItem is string otdel)
-            {
-                var items = spisok[otdel].tovari;
-                foreach (var item in items)
+                string name = txtName.Text.Trim();
+                if (int.TryParse(txtQuantity.Text, out int qty))
                 {
-                    listBox2.Items.Add($"{item.Key} - {item.Value}");
+                    selected.Name = name;
+                    selected.Quantity = qty;
+                    UpdateMedicineList();
                 }
             }
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void btnSave_Click(object sender, EventArgs e)
         {
-            SaveFileDialog sfd = new SaveFileDialog();
+            SaveMedicines();
+        }
 
-            if (sfd.ShowDialog() == DialogResult.OK)
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            SaveMedicines();
+        }
+
+        private void btnChangeDept_Click(object sender, EventArgs e)
+        {
+            string newName = Microsoft.VisualBasic.Interaction.InputBox("Введите название отделения", "Изменение", departmentName);
+            if (!string.IsNullOrWhiteSpace(newName))
             {
-                using (StreamWriter sw = new StreamWriter(sfd.FileName))
-                {
-                    foreach (var item in globalItems)
-                    {
-                        sw.WriteLine($"{item.Key} - {item.Value}");
-                    }
-                }
+                departmentName = newName;
+                lblDepartment.Text = departmentName;
             }
         }
     }
 }
-
 </code></pre>
 <p>Код для Form1.Designer.cs</p>
 <pre><code>
-﻿namespace Task_1
+﻿namespace AnyaTask5
 {
     partial class Form1
     {
-        /// <summary>
-        ///  Required designer variable.
-        /// </summary>
         private System.ComponentModel.IContainer components = null;
+        private Label lblDepartment;
+        private TextBox txtName;
+        private TextBox txtQuantity;
+        private ListBox listBoxAll;
+        private ListBox listBoxZero;
+        private Button btnAdd;
+        private Button btnRemove;
+        private Button btnDecrement;
+        private Button btnEdit;
+        private Button btnChangeDept;
+        private Button btnSave;
+        private Label lblAll;
+        private Label lblZero;
 
-        /// <summary>
-        ///  Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
             if (disposing && (components != null))
-            {
                 components.Dispose();
-            }
             base.Dispose(disposing);
         }
 
-        #region Windows Form Designer generated code
-
-        /// <summary>
-        ///  Required method for Designer support - do not modify
-        ///  the contents of this method with the code editor.
-        /// </summary>
         private void InitializeComponent()
         {
-            button1 = new Button();
-            listBox1 = new ListBox();
-            listBox2 = new ListBox();
-            listBox3 = new ListBox();
-            button2 = new Button();
-            label1 = new Label();
-            label2 = new Label();
-            label3 = new Label();
+            lblDepartment = new Label();
+            txtName = new TextBox();
+            txtQuantity = new TextBox();
+            listBoxAll = new ListBox();
+            listBoxZero = new ListBox();
+            btnAdd = new Button();
+            btnRemove = new Button();
+            btnDecrement = new Button();
+            btnEdit = new Button();
+            btnChangeDept = new Button();
+            btnSave = new Button();
+            lblAll = new Label();
+            lblZero = new Label();
             SuspendLayout();
             //
-            // button1
+            // lblDepartment
             //
-            button1.Location = new Point(356, 267);
-            button1.Margin = new Padding(3, 2, 3, 2);
-            button1.Name = "button1";
-            button1.Size = new Size(173, 22);
-            button1.TabIndex = 0;
-            button1.Text = "Добавить заявку";
-            button1.UseVisualStyleBackColor = true;
-            button1.Click += button1_Click;
+            lblDepartment.AutoSize = true;
+            lblDepartment.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            lblDepartment.Location = new Point(20, 15);
+            lblDepartment.Name = "lblDepartment";
+            lblDepartment.Size = new Size(154, 20);
+            lblDepartment.TabIndex = 0;
+            lblDepartment.Text = "Название отделения";
             //
-            // listBox1
+            // txtName
             //
-            listBox1.FormattingEnabled = true;
-            listBox1.ItemHeight = 15;
-            listBox1.Location = new Point(22, 55);
-            listBox1.Margin = new Padding(3, 2, 3, 2);
-            listBox1.Name = "listBox1";
-            listBox1.Size = new Size(204, 184);
-            listBox1.TabIndex = 1;
-            listBox1.SelectedIndexChanged += listBox1_SelectedIndexChanged;
+            txtName.Location = new Point(20, 50);
+            txtName.Name = "txtName";
+            txtName.PlaceholderText = "Наименование";
+            txtName.Size = new Size(150, 27);
+            txtName.TabIndex = 1;
             //
-            // listBox2
+            // txtQuantity
             //
-            listBox2.FormattingEnabled = true;
-            listBox2.ItemHeight = 15;
-            listBox2.Location = new Point(245, 55);
-            listBox2.Margin = new Padding(3, 2, 3, 2);
-            listBox2.Name = "listBox2";
-            listBox2.Size = new Size(193, 169);
-            listBox2.TabIndex = 2;
+            txtQuantity.Location = new Point(180, 50);
+            txtQuantity.Name = "txtQuantity";
+            txtQuantity.PlaceholderText = "Кол-во";
+            txtQuantity.Size = new Size(80, 27);
+            txtQuantity.TabIndex = 2;
             //
-            // listBox3
+            // listBoxAll
             //
-            listBox3.FormattingEnabled = true;
-            listBox3.ItemHeight = 15;
-            listBox3.Location = new Point(457, 55);
-            listBox3.Margin = new Padding(3, 2, 3, 2);
-            listBox3.Name = "listBox3";
-            listBox3.Size = new Size(193, 169);
-            listBox3.TabIndex = 3;
+            listBoxAll.FormattingEnabled = true;
+            listBoxAll.Location = new Point(20, 100);
+            listBoxAll.Name = "listBoxAll";
+            listBoxAll.Size = new Size(399, 84);
+            listBoxAll.TabIndex = 9;
             //
-            // button2
+            // listBoxZero
             //
-            button2.Location = new Point(535, 267);
-            button2.Margin = new Padding(3, 2, 3, 2);
-            button2.Name = "button2";
-            button2.Size = new Size(153, 22);
-            button2.TabIndex = 4;
-            button2.Text = "Сохранить заявки";
-            button2.UseVisualStyleBackColor = true;
-            button2.Click += button2_Click;
+            listBoxZero.FormattingEnabled = true;
+            listBoxZero.Location = new Point(20, 220);
+            listBoxZero.Name = "listBoxZero";
+            listBoxZero.Size = new Size(399, 64);
+            listBoxZero.TabIndex = 10;
             //
-            // label1
+            // btnAdd
             //
-            label1.AutoSize = true;
-            label1.Location = new Point(22, 28);
-            label1.Name = "label1";
-            label1.Size = new Size(49, 15);
-            label1.TabIndex = 5;
-            label1.Text = "Отделы";
+            btnAdd.Location = new Point(270, 50);
+            btnAdd.Name = "btnAdd";
+            btnAdd.Size = new Size(149, 27);
+            btnAdd.TabIndex = 3;
+            btnAdd.Text = "Добавить";
+            btnAdd.Click += btnAdd_Click;
             //
-            // label2
+            // btnRemove
             //
-            label2.AutoSize = true;
-            label2.Location = new Point(245, 28);
-            label2.Name = "label2";
-            label2.Size = new Size(100, 15);
-            label2.TabIndex = 6;
-            label2.Text = "Заявки от отдела";
+            btnRemove.Location = new Point(20, 310);
+            btnRemove.Name = "btnRemove";
+            btnRemove.Size = new Size(91, 34);
+            btnRemove.TabIndex = 4;
+            btnRemove.Text = "Удалить";
+            btnRemove.Click += btnRemove_Click;
             //
-            // label3
+            // btnDecrement
             //
-            label3.AutoSize = true;
-            label3.Location = new Point(457, 28);
-            label3.Name = "label3";
-            label3.Size = new Size(65, 15);
-            label3.TabIndex = 7;
-            label3.Text = "Все заявки";
+            btnDecrement.Location = new Point(117, 310);
+            btnDecrement.Name = "btnDecrement";
+            btnDecrement.Size = new Size(89, 34);
+            btnDecrement.TabIndex = 5;
+            btnDecrement.Text = "Списать";
+            btnDecrement.Click += btnDecrement_Click;
+            //
+            // btnEdit
+            //
+            btnEdit.Location = new Point(212, 310);
+            btnEdit.Name = "btnEdit";
+            btnEdit.Size = new Size(130, 34);
+            btnEdit.TabIndex = 6;
+            btnEdit.Text = "Редактировать";
+            btnEdit.Click += btnEdit_Click;
+            //
+            // btnChangeDept
+            //
+            btnChangeDept.Location = new Point(20, 356);
+            btnChangeDept.Name = "btnChangeDept";
+            btnChangeDept.Size = new Size(186, 27);
+            btnChangeDept.TabIndex = 7;
+            btnChangeDept.Text = "Изменить отделение";
+            btnChangeDept.Click += btnChangeDept_Click;
+            //
+            // btnSave
+            //
+            btnSave.Location = new Point(212, 356);
+            btnSave.Name = "btnSave";
+            btnSave.Size = new Size(130, 27);
+            btnSave.TabIndex = 8;
+            btnSave.Text = "Сохранить";
+            btnSave.Click += btnSave_Click;
+            //
+            // lblAll
+            //
+            lblAll.AutoSize = true;
+            lblAll.Location = new Point(20, 80);
+            lblAll.Name = "lblAll";
+            lblAll.Size = new Size(109, 20);
+            lblAll.TabIndex = 11;
+            lblAll.Text = "Все лекарства:";
+            //
+            // lblZero
+            //
+            lblZero.AutoSize = true;
+            lblZero.Location = new Point(20, 200);
+            lblZero.Name = "lblZero";
+            lblZero.Size = new Size(102, 20);
+            lblZero.TabIndex = 12;
+            lblZero.Text = "Закончились:";
             //
             // Form1
             //
-            AutoScaleDimensions = new SizeF(7F, 15F);
-            AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(700, 338);
-            Controls.Add(label3);
-            Controls.Add(label2);
-            Controls.Add(label1);
-            Controls.Add(button2);
-            Controls.Add(listBox3);
-            Controls.Add(listBox2);
-            Controls.Add(listBox1);
-            Controls.Add(button1);
-            Margin = new Padding(3, 2, 3, 2);
+            ClientSize = new Size(438, 400);
+            Controls.Add(lblDepartment);
+            Controls.Add(txtName);
+            Controls.Add(txtQuantity);
+            Controls.Add(btnAdd);
+            Controls.Add(btnRemove);
+            Controls.Add(btnDecrement);
+            Controls.Add(btnEdit);
+            Controls.Add(btnChangeDept);
+            Controls.Add(btnSave);
+            Controls.Add(listBoxAll);
+            Controls.Add(listBoxZero);
+            Controls.Add(lblAll);
+            Controls.Add(lblZero);
+            FormBorderStyle = FormBorderStyle.FixedDialog;
+            MaximizeBox = false;
             Name = "Form1";
-            Text = "Form1";
-            Load += Form1_Load;
+            Text = "Учёт лекарств";
             ResumeLayout(false);
             PerformLayout();
         }
-
-        #endregion
-
-        private Button button1;
-        private ListBox listBox1;
-        private ListBox listBox2;
-        private ListBox listBox3;
-        private Button button2;
-        private Label label1;
-        private Label label2;
-        private Label label3;
     }
 }
 
 </code></pre>
-<p>Код для Zayavka.cs</p>
+<p>Код для Medicine.cs</p>
 <pre><code>
 ﻿using System;
 using System.Collections.Generic;
@@ -6546,15 +6614,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Task_1
+namespace AnyaTask5
 {
-    public class Zayavka
+
+    public class Medicine
     {
-        public string NameOtdel { get; set; }
-        public Dictionary<string, int> tovari = new Dictionary< string, int>();
+        public string Name { get; set; }
+        public int Quantity { get; set; }
 
-
-
+        public override string ToString()
+        {
+            return $"{Name} - {Quantity}";
+        }
     }
 }
 

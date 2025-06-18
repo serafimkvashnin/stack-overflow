@@ -7,7 +7,7 @@
 >
   <head>
     <title>
-      c# - Заявки на канцтовары по отделам (1) - Stack Overflow на русском
+      c# - BinaryWriter how to save patients (2) - Stack Overflow на русском
     </title>
     <link
       rel="shortcut icon"
@@ -69,7 +69,7 @@
       name="twitter:title"
       property="og:title"
       itemprop="name"
-      content="Заявки на канцтовары по отделам (1)"
+      content="BinaryWriter how to save patients (2)"
     />
     <meta
       name="twitter:description"
@@ -107,7 +107,7 @@ namespace Task_1
     <link
       rel="alternate"
       type="application/atom+xml"
-      title="Лента для вопроса «Заявки на канцтовары по отделам (1)»"
+      title="Лента для вопроса «BinaryWriter how to save patients (2)»"
       href="/feeds/question/1614028"
     />
     <script
@@ -6043,7 +6043,7 @@ namespace Task_1
                 <a
                   href="/questions/1614028/%d0%97%d0%b0%d1%8f%d0%b2%d0%ba%d0%b8-%d0%bd%d0%b0-%d0%ba%d0%b0%d0%bd%d1%86%d1%82%d0%be%d0%b2%d0%b0%d1%80%d1%8b-%d0%bf%d0%be-%d0%be%d1%82%d0%b4%d0%b5%d0%bb%d0%b0%d0%bc-1"
                   class="question-hyperlink"
-                  >Заявки на канцтовары по отделам (1)</a
+                  >BinaryWriter how to save patients (2)</a
                 >
               </h1>
 
@@ -6280,135 +6280,16 @@ namespace Task_1
 
                   <div class="postcell post-layout--right">
                     <div class="s-prose js-post-body" itemprop="text">
-                      <p>Код для Form1</p>
-                      <pre
-                        class="lang-cs s-code-block"
-                      ><code data-highlighted="yes" class="hljs language-csharp"><span class="hljs-keyword">namespace</span> <span class="hljs-title">Task_1</span>
-{
-    <span class="hljs-keyword">public</span> <span class="hljs-keyword">partial</span> <span class="hljs-keyword">class</span> <span class="hljs-title">Form1</span> : <span class="hljs-title">Form</span>
-    {
-        <span class="hljs-keyword">public</span> Dictionary&lt;<span class="hljs-built_in">string</span>, Zayavka&gt; spisok;
-        <span class="hljs-keyword">private</span> Dictionary&lt;<span class="hljs-built_in">string</span>, <span class="hljs-built_in">int</span>&gt; globalItems = <span class="hljs-keyword">new</span> Dictionary&lt;<span class="hljs-built_in">string</span>, <span class="hljs-built_in">int</span>&gt;();
-
-        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">Form1</span>()</span>
-        {
-            spisok = <span class="hljs-keyword">new</span> Dictionary&lt;<span class="hljs-built_in">string</span>, Zayavka&gt;();
-            InitializeComponent();
-        }
-
-        <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Form1_Load</span>(<span class="hljs-params"><span class="hljs-built_in">object</span> sender, EventArgs e</span>)</span>
-        {
-
-        }
-
-        <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">button1_Click</span>(<span class="hljs-params"><span class="hljs-built_in">object</span> sender, EventArgs e</span>)</span>
-        {
-            OpenFileDialog openFileDialog = <span class="hljs-keyword">new</span> OpenFileDialog();
-            DialogResult dialogResult = openFileDialog.ShowDialog();
-            <span class="hljs-keyword">if</span> (dialogResult == DialogResult.OK)
-            {
-                <span class="hljs-built_in">string</span>[] line = File.ReadAllLines(openFileDialog.FileName);
-                <span class="hljs-built_in">string</span> NameOtdel = line[<span class="hljs-number">0</span>];
-                <span class="hljs-keyword">if</span> (spisok.ContainsKey(NameOtdel))
-                {
-                    MessageBox.Show(<span class="hljs-string">"Заявка уже была обработана"</span>);
-                    <span class="hljs-keyword">return</span>;
-                }
-                Zayavka zayavka = <span class="hljs-keyword">new</span> Zayavka();
-                zayavka.NameOtdel = NameOtdel;
-                <span class="hljs-keyword">for</span> (<span class="hljs-built_in">int</span> i = <span class="hljs-number">1</span>; i &lt; line.Length; i++)
-                {
-                    <span class="hljs-built_in">string</span>[] parts = line[i].Split(<span class="hljs-string">"-"</span>);
-                    <span class="hljs-built_in">string</span> NameTovar = parts[<span class="hljs-number">0</span>];
-                    <span class="hljs-built_in">int</span> TovarCount = <span class="hljs-built_in">int</span>.Parse(parts[<span class="hljs-number">1</span>]);
-                    zayavka.tovari[NameTovar] = TovarCount;
-
-                    <span class="hljs-keyword">if</span> (globalItems.ContainsKey(NameTovar))
-                        globalItems[NameTovar] += TovarCount;
-                    <span class="hljs-keyword">else</span>
-                        globalItems[NameTovar] = TovarCount;
-                }
-                spisok[zayavka.NameOtdel] = zayavka;
-                RefreshOtdelList();
-                RefreshGlobalList();
-            }
-        }
-
-        <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">RefreshOtdelList</span>()</span>
-        {
-            listBox1.Items.Clear();
-            listBox1.Items.AddRange(spisok.Keys.ToArray());
-        }
-
-        <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">RefreshGlobalList</span>()</span>
-        {
-            listBox3.Items.Clear();
-            <span class="hljs-keyword">foreach</span> (<span class="hljs-keyword">var</span> item <span class="hljs-keyword">in</span> globalItems)
-            {
-                listBox3.Items.Add(<span class="hljs-string">$"<span class="hljs-subst">{item.Key}</span> - <span class="hljs-subst">{item.Value}</span>"</span>);
-            }
-        }
-
-        <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">listBox1_SelectedIndexChanged</span>(<span class="hljs-params"><span class="hljs-built_in">object</span> sender, EventArgs e</span>)</span>
-        {
-            listBox2.Items.Clear();
-
-            <span class="hljs-keyword">if</span> (listBox1.SelectedItem <span class="hljs-keyword">is</span> <span class="hljs-built_in">string</span> otdel)
-            {
-                <span class="hljs-keyword">var</span> items = spisok[otdel].tovari;
-                <span class="hljs-keyword">foreach</span> (<span class="hljs-keyword">var</span> item <span class="hljs-keyword">in</span> items)
-                {
-                    listBox2.Items.Add(<span class="hljs-string">$"<span class="hljs-subst">{item.Key}</span> - <span class="hljs-subst">{item.Value}</span>"</span>);
-                }
-            }
-        }
-
-        <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">button2_Click</span>(<span class="hljs-params"><span class="hljs-built_in">object</span> sender, EventArgs e</span>)</span>
-        {
-            SaveFileDialog sfd = <span class="hljs-keyword">new</span> SaveFileDialog();
-
-            <span class="hljs-keyword">if</span> (sfd.ShowDialog() == DialogResult.OK)
-            {
-                <span class="hljs-keyword">using</span> (StreamWriter sw = <span class="hljs-keyword">new</span> StreamWriter(sfd.FileName))
-                {
-                    <span class="hljs-keyword">foreach</span> (<span class="hljs-keyword">var</span> item <span class="hljs-keyword">in</span> globalItems)
-                    {
-                        sw.WriteLine(<span class="hljs-string">$"<span class="hljs-subst">{item.Key}</span> - <span class="hljs-subst">{item.Value}</span>"</span>);
-                    }
-                }
-            }
-        }
-    }
-}
-
-</code>
-</pre>
-                      <p>Код для класса Заявка</p>
-                      <pre
-                        class="lang-cs s-code-block"
-                      ><code data-highlighted="yes" class="hljs language-csharp"><span class="hljs-keyword">using</span> System;
-<span class="hljs-keyword">using</span> System.Collections.Generic;
-<span class="hljs-keyword">using</span> System.Linq;
-<span class="hljs-keyword">using</span> System.Text;
-<span class="hljs-keyword">using</span> System.Threading.Tasks;
-
-<span class="hljs-keyword">namespace</span> <span class="hljs-title">Task_1</span>
-{
-    <span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">Zayavka</span>
-    {
-        <span class="hljs-keyword">public</span> <span class="hljs-built_in">string</span> NameOtdel { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; }
-        <span class="hljs-keyword">public</span> Dictionary&lt;<span class="hljs-built_in">string</span>, <span class="hljs-built_in">int</span>&gt; tovari = <span class="hljs-keyword">new</span> Dictionary&lt; <span class="hljs-built_in">string</span>, <span class="hljs-built_in">int</span>&gt;();
-    }
-}
-</code></pre>
-                      <pre><code>using System.Runtime.Serialization.Formatters.Binary;
+                      <p>Код для Form1.cs</p>
+<pre><code>
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text.Json;
 
 namespace Task2
 {
     public partial class Form1 : Form
     {
-        List&lt;Patient&gt; patients = new List&lt;Patient&gt;();
+        List<Patient> patients = new List<Patient>();
         public Form1()
         {
             InitializeComponent();
@@ -6421,7 +6302,7 @@ namespace Task2
                 using (BinaryReader reader = new BinaryReader(File.Open("Patient.dat", FileMode.Open)))
                 {
                     int count = reader.ReadInt32();
-                    for (int i = 0; i &lt; count; i++)
+                    for (int i = 0; i < count; i++)
                     {
                         Patient p = new Patient
                         {
@@ -6494,162 +6375,323 @@ namespace Task2
 }
 
 </code></pre>
-                      <p>Код дизайнера</p>
-                      <pre
-                        class="lang-cs s-code-block"
-                      ><code data-highlighted="yes" class="hljs language-csharp"><span class="hljs-keyword">namespace</span> <span class="hljs-title">Task_1</span>
+<p>Код для Form1.Designer.cs</p>
+<pre><code>
+﻿namespace Task2
 {
-    <span class="hljs-keyword">partial</span> <span class="hljs-keyword">class</span> <span class="hljs-title">Form1</span>
+    partial class Form1
     {
-        <span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;summary&gt;</span></span>
-        <span class="hljs-comment"><span class="hljs-doctag">///</span>  Required designer variable.</span>
-        <span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;/summary&gt;</span></span>
-        <span class="hljs-keyword">private</span> System.ComponentModel.IContainer components = <span class="hljs-literal">null</span>;
+        /// <summary>
+        ///  Required designer variable.
+        /// </summary>
+        private System.ComponentModel.IContainer components = null;
 
-        <span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;summary&gt;</span></span>
-        <span class="hljs-comment"><span class="hljs-doctag">///</span>  Clean up any resources being used.</span>
-        <span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;/summary&gt;</span></span>
-        <span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;param name="disposing"&gt;</span>true if managed resources should be disposed; otherwise, false.<span class="hljs-doctag">&lt;/param&gt;</span></span>
-        <span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Dispose</span>(<span class="hljs-params"><span class="hljs-built_in">bool</span> disposing</span>)</span>
+        /// <summary>
+        ///  Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing)
         {
-            <span class="hljs-keyword">if</span> (disposing &amp;&amp; (components != <span class="hljs-literal">null</span>))
+            if (disposing && (components != null))
             {
                 components.Dispose();
             }
-            <span class="hljs-keyword">base</span>.Dispose(disposing);
+            base.Dispose(disposing);
         }
 
-        <span class="hljs-meta">#<span class="hljs-keyword">region</span> Windows Form Designer generated code</span>
+        #region Windows Form Designer generated code
 
-        <span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;summary&gt;</span></span>
-        <span class="hljs-comment"><span class="hljs-doctag">///</span>  Required method for Designer support - do not modify</span>
-        <span class="hljs-comment"><span class="hljs-doctag">///</span>  the contents of this method with the code editor.</span>
-        <span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;/summary&gt;</span></span>
-        <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">InitializeComponent</span>()</span>
+        /// <summary>
+        ///  Required method for Designer support - do not modify
+        ///  the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
         {
-            button1 = <span class="hljs-keyword">new</span> Button();
-            listBox1 = <span class="hljs-keyword">new</span> ListBox();
-            listBox2 = <span class="hljs-keyword">new</span> ListBox();
-            listBox3 = <span class="hljs-keyword">new</span> ListBox();
-            button2 = <span class="hljs-keyword">new</span> Button();
-            label1 = <span class="hljs-keyword">new</span> Label();
-            label2 = <span class="hljs-keyword">new</span> Label();
-            label3 = <span class="hljs-keyword">new</span> Label();
+            textBox1 = new TextBox();
+            textBox2 = new TextBox();
+            textBox3 = new TextBox();
+            dateTimePicker1 = new DateTimePicker();
+            label1 = new Label();
+            label2 = new Label();
+            label3 = new Label();
+            label4 = new Label();
+            textBox4 = new TextBox();
+            textBox5 = new TextBox();
+            dateTimePicker2 = new DateTimePicker();
+            textBox6 = new TextBox();
+            label5 = new Label();
+            label6 = new Label();
+            label7 = new Label();
+            label8 = new Label();
+            button1 = new Button();
+            button2 = new Button();
+            listBox1 = new ListBox();
+            listBox2 = new ListBox();
             SuspendLayout();
-            <span class="hljs-comment">// </span>
-            <span class="hljs-comment">// button1</span>
-            <span class="hljs-comment">// </span>
-            button1.Location = <span class="hljs-keyword">new</span> Point(<span class="hljs-number">356</span>, <span class="hljs-number">267</span>);
-            button1.Margin = <span class="hljs-keyword">new</span> Padding(<span class="hljs-number">3</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">2</span>);
-            button1.Name = <span class="hljs-string">"button1"</span>;
-            button1.Size = <span class="hljs-keyword">new</span> Size(<span class="hljs-number">173</span>, <span class="hljs-number">22</span>);
-            button1.TabIndex = <span class="hljs-number">0</span>;
-            button1.Text = <span class="hljs-string">"Добавить заявку"</span>;
-            button1.UseVisualStyleBackColor = <span class="hljs-literal">true</span>;
+            //
+            // textBox1
+            //
+            textBox1.Location = new Point(346, 7);
+            textBox1.Margin = new Padding(3, 2, 3, 2);
+            textBox1.Name = "textBox1";
+            textBox1.Size = new Size(246, 23);
+            textBox1.TabIndex = 0;
+            //
+            // textBox2
+            //
+            textBox2.Location = new Point(346, 44);
+            textBox2.Margin = new Padding(3, 2, 3, 2);
+            textBox2.Name = "textBox2";
+            textBox2.Size = new Size(110, 23);
+            textBox2.TabIndex = 1;
+            //
+            // textBox3
+            //
+            textBox3.Location = new Point(346, 87);
+            textBox3.Margin = new Padding(3, 2, 3, 2);
+            textBox3.Name = "textBox3";
+            textBox3.Size = new Size(197, 23);
+            textBox3.TabIndex = 2;
+            //
+            // dateTimePicker1
+            //
+            dateTimePicker1.Location = new Point(361, 128);
+            dateTimePicker1.Margin = new Padding(3, 2, 3, 2);
+            dateTimePicker1.Name = "dateTimePicker1";
+            dateTimePicker1.Size = new Size(219, 23);
+            dateTimePicker1.TabIndex = 3;
+            //
+            // label1
+            //
+            label1.AutoSize = true;
+            label1.Location = new Point(265, 7);
+            label1.Name = "label1";
+            label1.Size = new Size(58, 15);
+            label1.TabIndex = 4;
+            label1.Text = "Фамилия";
+            //
+            // label2
+            //
+            label2.AutoSize = true;
+            label2.Location = new Point(265, 46);
+            label2.Name = "label2";
+            label2.Size = new Size(31, 15);
+            label2.TabIndex = 5;
+            label2.Text = "Имя";
+            //
+            // label3
+            //
+            label3.AutoSize = true;
+            label3.Location = new Point(265, 89);
+            label3.Name = "label3";
+            label3.Size = new Size(58, 15);
+            label3.TabIndex = 6;
+            label3.Text = "Отчество";
+            //
+            // label4
+            //
+            label4.AutoSize = true;
+            label4.Location = new Point(265, 128);
+            label4.Name = "label4";
+            label4.Size = new Size(90, 15);
+            label4.TabIndex = 7;
+            label4.Text = "Дата рождения";
+            //
+            // textBox4
+            //
+            textBox4.Location = new Point(346, 170);
+            textBox4.Margin = new Padding(3, 2, 3, 2);
+            textBox4.Name = "textBox4";
+            textBox4.Size = new Size(300, 23);
+            textBox4.TabIndex = 8;
+            //
+            // textBox5
+            //
+            textBox5.Location = new Point(346, 214);
+            textBox5.Margin = new Padding(3, 2, 3, 2);
+            textBox5.Name = "textBox5";
+            textBox5.Size = new Size(230, 23);
+            textBox5.TabIndex = 9;
+            //
+            // dateTimePicker2
+            //
+            dateTimePicker2.Location = new Point(377, 252);
+            dateTimePicker2.Margin = new Padding(3, 2, 3, 2);
+            dateTimePicker2.Name = "dateTimePicker2";
+            dateTimePicker2.Size = new Size(219, 23);
+            dateTimePicker2.TabIndex = 10;
+            //
+            // textBox6
+            //
+            textBox6.Location = new Point(346, 290);
+            textBox6.Margin = new Padding(3, 2, 3, 2);
+            textBox6.Name = "textBox6";
+            textBox6.Size = new Size(333, 23);
+            textBox6.TabIndex = 11;
+            //
+            // label5
+            //
+            label5.AutoSize = true;
+            label5.Location = new Point(265, 172);
+            label5.Name = "label5";
+            label5.Size = new Size(40, 15);
+            label5.TabIndex = 12;
+            label5.Text = "Адрес";
+            //
+            // label6
+            //
+            label6.AutoSize = true;
+            label6.Location = new Point(265, 214);
+            label6.Name = "label6";
+            label6.Size = new Size(35, 15);
+            label6.TabIndex = 13;
+            label6.Text = "ОМС";
+            //
+            // label7
+            //
+            label7.AutoSize = true;
+            label7.Location = new Point(265, 258);
+            label7.Name = "label7";
+            label7.Size = new Size(106, 15);
+            label7.TabIndex = 14;
+            label7.Text = "Дата поступления";
+            //
+            // label8
+            //
+            label8.AutoSize = true;
+            label8.Location = new Point(265, 295);
+            label8.Name = "label8";
+            label8.Size = new Size(52, 15);
+            label8.TabIndex = 15;
+            label8.Text = "Диагноз";
+            //
+            // button1
+            //
+            button1.Location = new Point(30, 307);
+            button1.Margin = new Padding(3, 2, 3, 2);
+            button1.Name = "button1";
+            button1.Size = new Size(148, 22);
+            button1.TabIndex = 16;
+            button1.Text = "Сохранить в файл";
+            button1.UseVisualStyleBackColor = true;
             button1.Click += button1_Click;
-            <span class="hljs-comment">// </span>
-            <span class="hljs-comment">// listBox1</span>
-            <span class="hljs-comment">// </span>
-            listBox1.FormattingEnabled = <span class="hljs-literal">true</span>;
-            listBox1.ItemHeight = <span class="hljs-number">15</span>;
-            listBox1.Location = <span class="hljs-keyword">new</span> Point(<span class="hljs-number">22</span>, <span class="hljs-number">55</span>);
-            listBox1.Margin = <span class="hljs-keyword">new</span> Padding(<span class="hljs-number">3</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">2</span>);
-            listBox1.Name = <span class="hljs-string">"listBox1"</span>;
-            listBox1.Size = <span class="hljs-keyword">new</span> Size(<span class="hljs-number">204</span>, <span class="hljs-number">184</span>);
-            listBox1.TabIndex = <span class="hljs-number">1</span>;
-            listBox1.SelectedIndexChanged += listBox1_SelectedIndexChanged;
-            <span class="hljs-comment">// </span>
-            <span class="hljs-comment">// listBox2</span>
-            <span class="hljs-comment">// </span>
-            listBox2.FormattingEnabled = <span class="hljs-literal">true</span>;
-            listBox2.ItemHeight = <span class="hljs-number">15</span>;
-            listBox2.Location = <span class="hljs-keyword">new</span> Point(<span class="hljs-number">245</span>, <span class="hljs-number">55</span>);
-            listBox2.Margin = <span class="hljs-keyword">new</span> Padding(<span class="hljs-number">3</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">2</span>);
-            listBox2.Name = <span class="hljs-string">"listBox2"</span>;
-            listBox2.Size = <span class="hljs-keyword">new</span> Size(<span class="hljs-number">193</span>, <span class="hljs-number">169</span>);
-            listBox2.TabIndex = <span class="hljs-number">2</span>;
-            <span class="hljs-comment">// </span>
-            <span class="hljs-comment">// listBox3</span>
-            <span class="hljs-comment">// </span>
-            listBox3.FormattingEnabled = <span class="hljs-literal">true</span>;
-            listBox3.ItemHeight = <span class="hljs-number">15</span>;
-            listBox3.Location = <span class="hljs-keyword">new</span> Point(<span class="hljs-number">457</span>, <span class="hljs-number">55</span>);
-            listBox3.Margin = <span class="hljs-keyword">new</span> Padding(<span class="hljs-number">3</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">2</span>);
-            listBox3.Name = <span class="hljs-string">"listBox3"</span>;
-            listBox3.Size = <span class="hljs-keyword">new</span> Size(<span class="hljs-number">193</span>, <span class="hljs-number">169</span>);
-            listBox3.TabIndex = <span class="hljs-number">3</span>;
-            <span class="hljs-comment">// </span>
-            <span class="hljs-comment">// button2</span>
-            <span class="hljs-comment">// </span>
-            button2.Location = <span class="hljs-keyword">new</span> Point(<span class="hljs-number">535</span>, <span class="hljs-number">267</span>);
-            button2.Margin = <span class="hljs-keyword">new</span> Padding(<span class="hljs-number">3</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">2</span>);
-            button2.Name = <span class="hljs-string">"button2"</span>;
-            button2.Size = <span class="hljs-keyword">new</span> Size(<span class="hljs-number">153</span>, <span class="hljs-number">22</span>);
-            button2.TabIndex = <span class="hljs-number">4</span>;
-            button2.Text = <span class="hljs-string">"Сохранить заявки"</span>;
-            button2.UseVisualStyleBackColor = <span class="hljs-literal">true</span>;
+            //
+            // button2
+            //
+            button2.Location = new Point(30, 268);
+            button2.Margin = new Padding(3, 2, 3, 2);
+            button2.Name = "button2";
+            button2.Size = new Size(82, 22);
+            button2.TabIndex = 17;
+            button2.Text = "Добавить";
+            button2.UseVisualStyleBackColor = true;
             button2.Click += button2_Click;
-            <span class="hljs-comment">// </span>
-            <span class="hljs-comment">// label1</span>
-            <span class="hljs-comment">// </span>
-            label1.AutoSize = <span class="hljs-literal">true</span>;
-            label1.Location = <span class="hljs-keyword">new</span> Point(<span class="hljs-number">22</span>, <span class="hljs-number">28</span>);
-            label1.Name = <span class="hljs-string">"label1"</span>;
-            label1.Size = <span class="hljs-keyword">new</span> Size(<span class="hljs-number">49</span>, <span class="hljs-number">15</span>);
-            label1.TabIndex = <span class="hljs-number">5</span>;
-            label1.Text = <span class="hljs-string">"Отделы"</span>;
-            <span class="hljs-comment">// </span>
-            <span class="hljs-comment">// label2</span>
-            <span class="hljs-comment">// </span>
-            label2.AutoSize = <span class="hljs-literal">true</span>;
-            label2.Location = <span class="hljs-keyword">new</span> Point(<span class="hljs-number">245</span>, <span class="hljs-number">28</span>);
-            label2.Name = <span class="hljs-string">"label2"</span>;
-            label2.Size = <span class="hljs-keyword">new</span> Size(<span class="hljs-number">100</span>, <span class="hljs-number">15</span>);
-            label2.TabIndex = <span class="hljs-number">6</span>;
-            label2.Text = <span class="hljs-string">"Заявки от отдела"</span>;
-            <span class="hljs-comment">// </span>
-            <span class="hljs-comment">// label3</span>
-            <span class="hljs-comment">// </span>
-            label3.AutoSize = <span class="hljs-literal">true</span>;
-            label3.Location = <span class="hljs-keyword">new</span> Point(<span class="hljs-number">457</span>, <span class="hljs-number">28</span>);
-            label3.Name = <span class="hljs-string">"label3"</span>;
-            label3.Size = <span class="hljs-keyword">new</span> Size(<span class="hljs-number">65</span>, <span class="hljs-number">15</span>);
-            label3.TabIndex = <span class="hljs-number">7</span>;
-            label3.Text = <span class="hljs-string">"Все заявки"</span>;
-            <span class="hljs-comment">// </span>
-            <span class="hljs-comment">// Form1</span>
-            <span class="hljs-comment">// </span>
-            AutoScaleDimensions = <span class="hljs-keyword">new</span> SizeF(<span class="hljs-number">7F</span>, <span class="hljs-number">15F</span>);
+            //
+            // listBox1
+            //
+            listBox1.FormattingEnabled = true;
+            listBox1.ItemHeight = 15;
+            listBox1.Location = new Point(30, 9);
+            listBox1.Margin = new Padding(3, 2, 3, 2);
+            listBox1.Name = "listBox1";
+            listBox1.Size = new Size(206, 139);
+            listBox1.TabIndex = 18;
+            listBox1.SelectedIndexChanged += listBox1_SelectedIndexChanged;
+            //
+            // listBox2
+            //
+            listBox2.FormattingEnabled = true;
+            listBox2.ItemHeight = 15;
+            listBox2.Location = new Point(30, 151);
+            listBox2.Margin = new Padding(3, 2, 3, 2);
+            listBox2.Name = "listBox2";
+            listBox2.Size = new Size(206, 109);
+            listBox2.TabIndex = 19;
+            //
+            // Form1
+            //
+            AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = <span class="hljs-keyword">new</span> Size(<span class="hljs-number">700</span>, <span class="hljs-number">338</span>);
+            ClientSize = new Size(700, 338);
+            Controls.Add(listBox2);
+            Controls.Add(listBox1);
+            Controls.Add(button2);
+            Controls.Add(button1);
+            Controls.Add(label8);
+            Controls.Add(label7);
+            Controls.Add(label6);
+            Controls.Add(label5);
+            Controls.Add(textBox6);
+            Controls.Add(dateTimePicker2);
+            Controls.Add(textBox5);
+            Controls.Add(textBox4);
+            Controls.Add(label4);
             Controls.Add(label3);
             Controls.Add(label2);
             Controls.Add(label1);
-            Controls.Add(button2);
-            Controls.Add(listBox3);
-            Controls.Add(listBox2);
-            Controls.Add(listBox1);
-            Controls.Add(button1);
-            Margin = <span class="hljs-keyword">new</span> Padding(<span class="hljs-number">3</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">2</span>);
-            Name = <span class="hljs-string">"Form1"</span>;
-            Text = <span class="hljs-string">"Form1"</span>;
+            Controls.Add(dateTimePicker1);
+            Controls.Add(textBox3);
+            Controls.Add(textBox2);
+            Controls.Add(textBox1);
+            Margin = new Padding(3, 2, 3, 2);
+            Name = "Form1";
+            Text = "Form1";
             Load += Form1_Load;
-            ResumeLayout(<span class="hljs-literal">false</span>);
+            ResumeLayout(false);
             PerformLayout();
         }
 
-        <span class="hljs-meta">#<span class="hljs-keyword">endregion</span></span>
+        #endregion
 
-        <span class="hljs-keyword">private</span> Button button1;
-        <span class="hljs-keyword">private</span> ListBox listBox1;
-        <span class="hljs-keyword">private</span> ListBox listBox2;
-        <span class="hljs-keyword">private</span> ListBox listBox3;
-        <span class="hljs-keyword">private</span> Button button2;
-        <span class="hljs-keyword">private</span> Label label1;
-        <span class="hljs-keyword">private</span> Label label2;
-        <span class="hljs-keyword">private</span> Label label3;
+        private TextBox textBox1;
+        private TextBox textBox2;
+        private TextBox textBox3;
+        private DateTimePicker dateTimePicker1;
+        private Label label1;
+        private Label label2;
+        private Label label3;
+        private Label label4;
+        private TextBox textBox4;
+        private TextBox textBox5;
+        private DateTimePicker dateTimePicker2;
+        private TextBox textBox6;
+        private Label label5;
+        private Label label6;
+        private Label label7;
+        private Label label8;
+        private Button button1;
+        private Button button2;
+        private ListBox listBox1;
+        private ListBox listBox2;
     }
 }
+
+</code></pre>
+<p>Код для Patient.cs</p>
+<pre><code>
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Task2
+{
+    public class Patient
+    {
+        public string SuName {  get; set; }
+        public string Name { get; set; }
+        public string FathersName { get; set; }
+        public DateTime DataBirth {  get; set; }
+        public string Adress { get; set; }
+        public string Oms { get; set; }
+        public DateTime DataPostuplenia { get; set; }
+        public string Diagnoz { get; set; }
+
+    }
+}
+
 </code></pre>
                     </div>
 

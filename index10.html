@@ -7,7 +7,8 @@
 >
   <head>
     <title>
-      c# - StreamWriter help (1) - Stack Overflow на русском
+      c# - C# store employes with children with BinaryWriter/Reader (10) - Stack Overflow на
+      русском
     </title>
     <link
       rel="shortcut icon"
@@ -69,7 +70,7 @@
       name="twitter:title"
       property="og:title"
       itemprop="name"
-      content="StreamWriter help (1)"
+      content="C# store employes with children with BinaryWriter/Reader (10)"
     />
     <meta
       name="twitter:description"
@@ -107,7 +108,7 @@ namespace Task_1
     <link
       rel="alternate"
       type="application/atom+xml"
-      title="Лента для вопроса «StreamWriter help (1)»"
+      title="Лента для вопроса «C# store employes with children with BinaryWriter/Reader (10)»"
       href="/feeds/question/1614028"
     />
     <script
@@ -6043,7 +6044,7 @@ namespace Task_1
                 <a
                   href="/questions/1614028/%d0%97%d0%b0%d1%8f%d0%b2%d0%ba%d0%b8-%d0%bd%d0%b0-%d0%ba%d0%b0%d0%bd%d1%86%d1%82%d0%be%d0%b2%d0%b0%d1%80%d1%8b-%d0%bf%d0%be-%d0%be%d1%82%d0%b4%d0%b5%d0%bb%d0%b0%d0%bc-1"
                   class="question-hyperlink"
-                  >StreamWriter help (1)</a
+                  >C# store employes with children with BinaryWriter/Reader (10)</a
                 >
               </h1>
 
@@ -6282,97 +6283,198 @@ namespace Task_1
                     <div class="s-prose js-post-body" itemprop="text">
                       <p>Код для Form1.cs</p>
 <pre><code>
-namespace Task_1
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace AnyaTask10
 {
     public partial class Form1 : Form
     {
-        public Dictionary<string, Zayavka> spisok;
-        private Dictionary<string, int> globalItems = new Dictionary<string, int>();
-
+        public List<Sotrudnik> SotrudnikList = new List<Sotrudnik>();
         public Form1()
         {
-            spisok = new Dictionary<string, Zayavka>();
             InitializeComponent();
-        }
-
-        private void Form1_Load(object sender, EventArgs e)
-        {
-
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            DialogResult dialogResult = openFileDialog.ShowDialog();
-            if (dialogResult == DialogResult.OK)
+            OpenFileDialog ofd = new OpenFileDialog();
+            if (ofd.ShowDialog() == DialogResult.OK)
             {
-                string[] line = File.ReadAllLines(openFileDialog.FileName);
-                string NameOtdel = line[0];
-                if (spisok.ContainsKey(NameOtdel))
+                string[] lines = File.ReadAllLines(ofd.FileName);
+                string otdel = lines[0];
+                for (int i = 1; i < lines.Length; i++)
                 {
-                    MessageBox.Show("Заявка уже была обработана");
-                    return;
-                }
-                Zayavka zayavka = new Zayavka();
-                zayavka.NameOtdel = NameOtdel;
-                for (int i = 1; i < line.Length; i++)
-                {
-                    string[] parts = line[i].Split("-");
-                    string NameTovar = parts[0];
-                    int TovarCount = int.Parse(parts[1]);
-                    zayavka.tovari[NameTovar] = TovarCount;
+                    Sotrudnik so = new Sotrudnik();
+                    string[] data = lines[i].Split(new string[] { ", " }, StringSplitOptions.None);
+                    so.Otdel = otdel;
+                    so.Fullname = data[0];
+                    so.DataRozd = DateTime.ParseExact(data[1], "dd.MM.yyyy", CultureInfo.InvariantCulture);
+                    so.Pol = data[2];
+                    so.Obrazovanie = data[3];
+                    so.Dolzhnost = data[4];
+                    so.SemPolozh = data[5];
 
-                    if (globalItems.ContainsKey(NameTovar))
-                        globalItems[NameTovar] += TovarCount;
-                    else
-                        globalItems[NameTovar] = TovarCount;
+                    if (data.Length > 6)
+                    {
+                        int rebenokLines = 2;
+                        int rebenokInfoStartIndex = 7;
+                        for (int j = 0; j < int.Parse(data[6]); j++)
+                        {
+                            Rebenok rebenok = new Rebenok();
+                            rebenok.Name = data[rebenokInfoStartIndex + j * rebenokLines];
+                            rebenok.DataRozd = DateTime.ParseExact(data[rebenokInfoStartIndex + j * rebenokLines + 1], "dd.MM.yyyy", CultureInfo.InvariantCulture);
+                            so.Deti.Add(rebenok);
+                        }
+                    }
+                    SotrudnikList.Add(so);
                 }
-                spisok[zayavka.NameOtdel] = zayavka;
-                RefreshOtdelList();
-                RefreshGlobalList();
             }
-        }
 
-        private void RefreshOtdelList()
-        {
             listBox1.Items.Clear();
-            listBox1.Items.AddRange(spisok.Keys.ToArray());
+            listBox1.Items.AddRange(SotrudnikList.ToArray());
         }
 
-        private void RefreshGlobalList()
+        private void textBox1_TextChanged(object sender, EventArgs e)
         {
-            listBox3.Items.Clear();
-            foreach (var item in globalItems)
+            string poiskText = textBox1.Text.Trim().ToLower();
+
+            List<Sotrudnik> filtered = new List<Sotrudnik>(SotrudnikList);
+
+            if (poiskText.Length > 0)
             {
-                listBox3.Items.Add($"{item.Key} - {item.Value}");
+                filtered.Clear();
+
+                foreach (Sotrudnik so in SotrudnikList)
+                {
+                    string sotrText = $"{so.Otdel}{so.Fullname}{so.Obrazovanie}{so.Dolzhnost}{so.Pol}{so.SemPolozh}".ToLower();
+                    if (sotrText.Contains(poiskText))
+                    {
+                        filtered.Add(so);
+                        continue;
+                    }
+
+                    if (DateTime.TryParse(poiskText, out DateTime data))
+                    {
+                        foreach (Rebenok r in so.Deti)
+                        {
+                            if (r.DataRozd > data)
+                            {
+                                filtered.Add(so);
+                                break;
+                            }
+                        }
+                    }
+                }
             }
+
+            listBox1.Items.Clear();
+            listBox1.Items.AddRange(filtered.ToArray());
         }
 
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            listBox2.Items.Clear();
-
-            if (listBox1.SelectedItem is string otdel)
+            if (listBox1.SelectedItem is Sotrudnik so)
             {
-                var items = spisok[otdel].tovari;
-                foreach (var item in items)
+                string info = $"{so.DataRozd}\n{so.Pol}\n{so.Dolzhnost}\n{so.Obrazovanie}\n{so.SemPolozh}\n";
+                if (so.Deti.Count > 0)
                 {
-                    listBox2.Items.Add($"{item.Key} - {item.Value}");
+                    info += $"Дети ({so.Deti.Count}):\n";
+                    foreach (Rebenok rebenok in so.Deti)
+                    {
+                        info += rebenok + "\n";
+                    }
                 }
+                label1.Text = info;
+            }
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            if (File.Exists("sotrudniki.txt"))
+            {
+                BinaryReader br = new BinaryReader(File.Open("sotrudniki.txt", FileMode.Open));
+                int count = br.ReadInt32();
+                for (int i = 0; i < count; i++)
+                {
+                    Sotrudnik so = new Sotrudnik();
+                    so.Otdel = br.ReadString();
+                    so.Fullname = br.ReadString();
+                    so.DataRozd = DateTime.FromBinary(br.ReadInt64());
+                    so.Pol = br.ReadString();
+                    so.Dolzhnost = br.ReadString();
+                    so.Obrazovanie = br.ReadString();
+                    so.SemPolozh = br.ReadString();
+                    int detiCount = br.ReadInt32();
+                    for (int j = 0; j < detiCount; j++)
+                    {
+                        Rebenok rebenok = new Rebenok();
+                        rebenok.Name = br.ReadString();
+                        rebenok.DataRozd = DateTime.FromBinary(br.ReadInt64());
+                        so.Deti.Add(rebenok);
+                    }
+                    SotrudnikList.Add(so);
+                }
+
+                listBox1.Items.Clear();
+                listBox1.Items.AddRange(SotrudnikList.ToArray());
             }
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            SaveFileDialog sfd = new SaveFileDialog();
-
-            if (sfd.ShowDialog() == DialogResult.OK)
+            BinaryWriter bw = new BinaryWriter(File.Open("sotrudniki.txt", FileMode.Create));
+            bw.Write(SotrudnikList.Count);
+            foreach (Sotrudnik so in SotrudnikList)
             {
-                using (StreamWriter sw = new StreamWriter(sfd.FileName))
+                bw.Write(so.Otdel);
+                bw.Write(so.Fullname);
+                bw.Write(so.DataRozd.ToBinary());
+                bw.Write(so.Pol);
+                bw.Write(so.Dolzhnost);
+                bw.Write(so.Obrazovanie);
+                bw.Write(so.SemPolozh);
+                bw.Write(so.Deti.Count);
+                foreach (Rebenok rebenok in so.Deti)
                 {
-                    foreach (var item in globalItems)
+                    bw.Write(rebenok.Name);
+                    bw.Write(rebenok.DataRozd.ToBinary());
+                }
+            }
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            if (listBox1.SelectedIndices.Count > 0)
+            {
+                SaveFileDialog saveFileDialog = new SaveFileDialog();
+                if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    using (StreamWriter sw = new StreamWriter(saveFileDialog.FileName))
                     {
-                        sw.WriteLine($"{item.Key} - {item.Value}");
+                        foreach (int index in listBox1.SelectedIndices)
+                        {
+                            Sotrudnik so = SotrudnikList[index];
+                            string sotrText = $"{so.Fullname}, {so.DataRozd.ToString("dd.MM.yyyy")}, {so.Pol}, {so.Obrazovanie}, {so.Dolzhnost}, {so.SemPolozh}";
+                            if (so.Deti.Count > 0)
+                            {
+                                sotrText += $", {so.Deti.Count}";
+                                foreach (Rebenok rebenok in so.Deti)
+                                {
+                                    sotrText += $", {rebenok.Name}, {rebenok.DataRozd.ToString("dd.MM.yyyy")}";
+                                }
+                            }
+                            sw.WriteLine(sotrText);
+                        }
                     }
                 }
             }
@@ -6383,17 +6485,17 @@ namespace Task_1
 </code></pre>
 <p>Код для Form1.Designer.cs</p>
 <pre><code>
-﻿namespace Task_1
+﻿namespace AnyaTask10
 {
     partial class Form1
     {
         /// <summary>
-        ///  Required designer variable.
+        /// Required designer variable.
         /// </summary>
         private System.ComponentModel.IContainer components = null;
 
         /// <summary>
-        ///  Clean up any resources being used.
+        /// Clean up any resources being used.
         /// </summary>
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
@@ -6408,137 +6510,115 @@ namespace Task_1
         #region Windows Form Designer generated code
 
         /// <summary>
-        ///  Required method for Designer support - do not modify
-        ///  the contents of this method with the code editor.
+        /// Required method for Designer support - do not modify
+        /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent()
         {
-            button1 = new Button();
-            listBox1 = new ListBox();
-            listBox2 = new ListBox();
-            listBox3 = new ListBox();
-            button2 = new Button();
-            label1 = new Label();
-            label2 = new Label();
-            label3 = new Label();
-            SuspendLayout();
-            //
-            // button1
-            //
-            button1.Location = new Point(356, 267);
-            button1.Margin = new Padding(3, 2, 3, 2);
-            button1.Name = "button1";
-            button1.Size = new Size(173, 22);
-            button1.TabIndex = 0;
-            button1.Text = "Добавить заявку";
-            button1.UseVisualStyleBackColor = true;
-            button1.Click += button1_Click;
+            this.listBox1 = new System.Windows.Forms.ListBox();
+            this.button1 = new System.Windows.Forms.Button();
+            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.button2 = new System.Windows.Forms.Button();
+            this.button3 = new System.Windows.Forms.Button();
+            this.SuspendLayout();
             //
             // listBox1
             //
-            listBox1.FormattingEnabled = true;
-            listBox1.ItemHeight = 15;
-            listBox1.Location = new Point(22, 55);
-            listBox1.Margin = new Padding(3, 2, 3, 2);
-            listBox1.Name = "listBox1";
-            listBox1.Size = new Size(204, 184);
-            listBox1.TabIndex = 1;
-            listBox1.SelectedIndexChanged += listBox1_SelectedIndexChanged;
+            this.listBox1.FormattingEnabled = true;
+            this.listBox1.ItemHeight = 16;
+            this.listBox1.Location = new System.Drawing.Point(33, 68);
+            this.listBox1.Margin = new System.Windows.Forms.Padding(4);
+            this.listBox1.Name = "listBox1";
+            this.listBox1.SelectionMode = System.Windows.Forms.SelectionMode.MultiSimple;
+            this.listBox1.Size = new System.Drawing.Size(317, 324);
+            this.listBox1.TabIndex = 0;
+            this.listBox1.SelectedIndexChanged += new System.EventHandler(this.listBox1_SelectedIndexChanged);
             //
-            // listBox2
+            // button1
             //
-            listBox2.FormattingEnabled = true;
-            listBox2.ItemHeight = 15;
-            listBox2.Location = new Point(245, 55);
-            listBox2.Margin = new Padding(3, 2, 3, 2);
-            listBox2.Name = "listBox2";
-            listBox2.Size = new Size(193, 169);
-            listBox2.TabIndex = 2;
+            this.button1.Location = new System.Drawing.Point(33, 431);
+            this.button1.Margin = new System.Windows.Forms.Padding(4);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(159, 28);
+            this.button1.TabIndex = 1;
+            this.button1.Text = "Загрузить отдел";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             //
-            // listBox3
+            // textBox1
             //
-            listBox3.FormattingEnabled = true;
-            listBox3.ItemHeight = 15;
-            listBox3.Location = new Point(457, 55);
-            listBox3.Margin = new Padding(3, 2, 3, 2);
-            listBox3.Name = "listBox3";
-            listBox3.Size = new Size(193, 169);
-            listBox3.TabIndex = 3;
-            //
-            // button2
-            //
-            button2.Location = new Point(535, 267);
-            button2.Margin = new Padding(3, 2, 3, 2);
-            button2.Name = "button2";
-            button2.Size = new Size(153, 22);
-            button2.TabIndex = 4;
-            button2.Text = "Сохранить заявки";
-            button2.UseVisualStyleBackColor = true;
-            button2.Click += button2_Click;
+            this.textBox1.Location = new System.Drawing.Point(33, 38);
+            this.textBox1.Margin = new System.Windows.Forms.Padding(4);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(317, 22);
+            this.textBox1.TabIndex = 2;
+            this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
             //
             // label1
             //
-            label1.AutoSize = true;
-            label1.Location = new Point(22, 28);
-            label1.Name = "label1";
-            label1.Size = new Size(49, 15);
-            label1.TabIndex = 5;
-            label1.Text = "Отделы";
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(375, 68);
+            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(44, 16);
+            this.label1.TabIndex = 3;
+            this.label1.Text = "label1";
             //
-            // label2
+            // button2
             //
-            label2.AutoSize = true;
-            label2.Location = new Point(245, 28);
-            label2.Name = "label2";
-            label2.Size = new Size(100, 15);
-            label2.TabIndex = 6;
-            label2.Text = "Заявки от отдела";
+            this.button2.Location = new System.Drawing.Point(199, 431);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(220, 28);
+            this.button2.TabIndex = 4;
+            this.button2.Text = "Сохранить общий список";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
             //
-            // label3
+            // button3
             //
-            label3.AutoSize = true;
-            label3.Location = new Point(457, 28);
-            label3.Name = "label3";
-            label3.Size = new Size(65, 15);
-            label3.TabIndex = 7;
-            label3.Text = "Все заявки";
+            this.button3.Location = new System.Drawing.Point(425, 431);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(220, 28);
+            this.button3.TabIndex = 5;
+            this.button3.Text = "Сохранить выбранные";
+            this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
             //
             // Form1
             //
-            AutoScaleDimensions = new SizeF(7F, 15F);
-            AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(700, 338);
-            Controls.Add(label3);
-            Controls.Add(label2);
-            Controls.Add(label1);
-            Controls.Add(button2);
-            Controls.Add(listBox3);
-            Controls.Add(listBox2);
-            Controls.Add(listBox1);
-            Controls.Add(button1);
-            Margin = new Padding(3, 2, 3, 2);
-            Name = "Form1";
-            Text = "Form1";
-            Load += Form1_Load;
-            ResumeLayout(false);
-            PerformLayout();
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.ClientSize = new System.Drawing.Size(1067, 554);
+            this.Controls.Add(this.button3);
+            this.Controls.Add(this.button2);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.button1);
+            this.Controls.Add(this.listBox1);
+            this.Margin = new System.Windows.Forms.Padding(4);
+            this.Name = "Form1";
+            this.Text = "Form1";
+            this.Load += new System.EventHandler(this.Form1_Load);
+            this.ResumeLayout(false);
+            this.PerformLayout();
+
         }
 
         #endregion
 
-        private Button button1;
-        private ListBox listBox1;
-        private ListBox listBox2;
-        private ListBox listBox3;
-        private Button button2;
-        private Label label1;
-        private Label label2;
-        private Label label3;
+        private System.Windows.Forms.ListBox listBox1;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button button3;
     }
 }
 
+
 </code></pre>
-<p>Код для Zayavka.cs</p>
+<p>Код для Rebenok.cs</p>
 <pre><code>
 ﻿using System;
 using System.Collections.Generic;
@@ -6546,15 +6626,48 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Task_1
+namespace AnyaTask10
 {
-    public class Zayavka
+    [Serializable]
+    public class Rebenok
     {
-        public string NameOtdel { get; set; }
-        public Dictionary<string, int> tovari = new Dictionary< string, int>();
+        public string Name { get; set; }
+        public DateTime DataRozd { get; set; }
 
+        public override string ToString()
+        {
+            return $"{Name} {DataRozd}";
+        }
+    }
+}
 
+</code></pre>
+<p>Код для Sotrudnik.cs</p>
+<pre><code>
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
+namespace AnyaTask10
+{
+    [Serializable]
+    public class Sotrudnik
+    {
+        public string Otdel { get; set; }
+        public string Fullname { get; set; }
+        public DateTime DataRozd { get; set; }
+        public string Pol { get; set; }
+        public string Obrazovanie { get; set; }
+        public string Dolzhnost { get; set; }
+        public string SemPolozh { get; set; }
+        public List<Rebenok> Deti { get; set; } = new List<Rebenok>();
+
+        public override string ToString()
+        {
+            return Fullname;
+        }
     }
 }
 

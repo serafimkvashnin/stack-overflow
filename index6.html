@@ -7,7 +7,8 @@
 >
   <head>
     <title>
-      c# - StreamWriter help (1) - Stack Overflow на русском
+      c# - BinaryWriter example in C# to store notes (6) - Stack Overflow на
+      русском
     </title>
     <link
       rel="shortcut icon"
@@ -69,7 +70,7 @@
       name="twitter:title"
       property="og:title"
       itemprop="name"
-      content="StreamWriter help (1)"
+      content="BinaryWriter example in C# to store notes (6)"
     />
     <meta
       name="twitter:description"
@@ -107,7 +108,7 @@ namespace Task_1
     <link
       rel="alternate"
       type="application/atom+xml"
-      title="Лента для вопроса «StreamWriter help (1)»"
+      title="Лента для вопроса «BinaryWriter example in C# to store notes (6)»"
       href="/feeds/question/1614028"
     />
     <script
@@ -6043,7 +6044,7 @@ namespace Task_1
                 <a
                   href="/questions/1614028/%d0%97%d0%b0%d1%8f%d0%b2%d0%ba%d0%b8-%d0%bd%d0%b0-%d0%ba%d0%b0%d0%bd%d1%86%d1%82%d0%be%d0%b2%d0%b0%d1%80%d1%8b-%d0%bf%d0%be-%d0%be%d1%82%d0%b4%d0%b5%d0%bb%d0%b0%d0%bc-1"
                   class="question-hyperlink"
-                  >StreamWriter help (1)</a
+                  >BinaryWriter example in C# to store notes (6)</a
                 >
               </h1>
 
@@ -6282,100 +6283,136 @@ namespace Task_1
                     <div class="s-prose js-post-body" itemprop="text">
                       <p>Код для Form1.cs</p>
 <pre><code>
-namespace Task_1
+using System.Text.Json;
+using System.Xml.Linq;
+
+namespace AnyaTask6
 {
     public partial class Form1 : Form
     {
-        public Dictionary<string, Zayavka> spisok;
-        private Dictionary<string, int> globalItems = new Dictionary<string, int>();
+        private List<Note> notes = new();
+        private string filePath = "notes.txt";
+        private System.Windows.Forms.Timer checkTimer;
 
         public Form1()
         {
-            spisok = new Dictionary<string, Zayavka>();
             InitializeComponent();
+            LoadNotes();
+            UpdateList();
+            StartClock();
         }
 
-        private void Form1_Load(object sender, EventArgs e)
+        private void LoadNotes()
         {
+            if (!File.Exists(filePath)) return;
 
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            DialogResult dialogResult = openFileDialog.ShowDialog();
-            if (dialogResult == DialogResult.OK)
+            string[] lines = File.ReadAllLines(filePath);
+            List<Note> loadedNotes = new List<Note>();
+            foreach (string line in lines)
             {
-                string[] line = File.ReadAllLines(openFileDialog.FileName);
-                string NameOtdel = line[0];
-                if (spisok.ContainsKey(NameOtdel))
-                {
-                    MessageBox.Show("Заявка уже была обработана");
-                    return;
-                }
-                Zayavka zayavka = new Zayavka();
-                zayavka.NameOtdel = NameOtdel;
-                for (int i = 1; i < line.Length; i++)
-                {
-                    string[] parts = line[i].Split("-");
-                    string NameTovar = parts[0];
-                    int TovarCount = int.Parse(parts[1]);
-                    zayavka.tovari[NameTovar] = TovarCount;
+                string[] med = line.Split("-", StringSplitOptions.TrimEntries);
+                Note me = new Note();
+                me.Time = DateTime.Parse(med[0]);
+                me.Text = med[1];
+                loadedNotes.Add(me);
+            }
 
-                    if (globalItems.ContainsKey(NameTovar))
-                        globalItems[NameTovar] += TovarCount;
-                    else
-                        globalItems[NameTovar] = TovarCount;
-                }
-                spisok[zayavka.NameOtdel] = zayavka;
-                RefreshOtdelList();
-                RefreshGlobalList();
+            var now = DateTime.Now;
+
+            foreach (var note in loadedNotes)
+            {
+                if (note.Time > now)
+                    notes.Add(note);
+                else if (note.Time <= now)
+                    ShowAndRemovePastNote(note);
             }
         }
 
-        private void RefreshOtdelList()
+        private void ShowAndRemovePastNote(Note note)
         {
-            listBox1.Items.Clear();
-            listBox1.Items.AddRange(spisok.Keys.ToArray());
-        }
-
-        private void RefreshGlobalList()
-        {
-            listBox3.Items.Clear();
-            foreach (var item in globalItems)
+            if (MessageBox.Show($"Задача просрочена {note.Time}:\n{note.Text}") == DialogResult.OK)
             {
-                listBox3.Items.Add($"{item.Key} - {item.Value}");
+                // Просто не добавляем в список
             }
         }
 
-        private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
+        private void SaveNotes()
         {
-            listBox2.Items.Clear();
-
-            if (listBox1.SelectedItem is string otdel)
+            List<Note> sorted = notes.OrderBy(n => n.Time).ToList();
+            using (StreamWriter sw = new StreamWriter(filePath))
             {
-                var items = spisok[otdel].tovari;
-                foreach (var item in items)
-                {
-                    listBox2.Items.Add($"{item.Key} - {item.Value}");
+                foreach (var note in sorted) {
+                    sw.WriteLine(note);
                 }
             }
+            MessageBox.Show("Список сохранён");
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void UpdateList()
         {
-            SaveFileDialog sfd = new SaveFileDialog();
+            listBoxNotes.Items.Clear();
+            foreach (var note in notes.OrderBy(n => n.Time))
+                listBoxNotes.Items.Add(note);
+        }
 
-            if (sfd.ShowDialog() == DialogResult.OK)
+        private void StartClock()
+        {
+            checkTimer = new System.Windows.Forms.Timer();
+            checkTimer.Interval = 5000;
+            checkTimer.Tick += (s, e) =>
             {
-                using (StreamWriter sw = new StreamWriter(sfd.FileName))
+                lblTime.Text = DateTime.Now.ToString();
+
+                var expired = notes.Where(n => n.Time <= DateTime.Now).ToList();
+                foreach (var note in expired)
                 {
-                    foreach (var item in globalItems)
-                    {
-                        sw.WriteLine($"{item.Key} - {item.Value}");
-                    }
+                    ShowAndRemovePastNote(note);
+                    notes.Remove(note);
                 }
+                UpdateList();
+            };
+            checkTimer.Start();
+        }
+
+        private void btnAdd_Click(object sender, EventArgs e)
+        {
+            var time = dateTimePicker1.Value;
+            var text = txtText.Text.Trim();
+            if (string.IsNullOrWhiteSpace(text)) return;
+
+            if (time <= DateTime.Now)
+            {
+                ShowAndRemovePastNote(new Note { Time = time, Text = text });
+                return;
             }
+
+            notes.Add(new Note { Time = time, Text = text });
+            UpdateList();
+        }
+
+        private void btnDelete_Click(object sender, EventArgs e)
+        {
+            if (listBoxNotes.SelectedItem is Note selected)
+            {
+                notes.Remove(selected);
+                UpdateList();
+            }
+        }
+
+        private void btnEdit_Click(object sender, EventArgs e)
+        {
+            if (listBoxNotes.SelectedItem is Note selected)
+            {
+                var newTime = dateTimePicker1.Value;
+                selected.Text = txtText.Text;
+                selected.Time = newTime;
+                UpdateList();
+            }
+        }
+
+        private void btnSave_Click(object sender, EventArgs e)
+        {
+            SaveNotes();
         }
     }
 }
@@ -6383,162 +6420,168 @@ namespace Task_1
 </code></pre>
 <p>Код для Form1.Designer.cs</p>
 <pre><code>
-﻿namespace Task_1
+﻿namespace AnyaTask6
 {
     partial class Form1
     {
-        /// <summary>
-        ///  Required designer variable.
-        /// </summary>
         private System.ComponentModel.IContainer components = null;
 
-        /// <summary>
-        ///  Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        private Label lblTime;
+        private TextBox txtText;
+        private ListBox listBoxNotes;
+        private Button btnAdd;
+        private Button btnDelete;
+        private Button btnEdit;
+        private Button btnSave;
+        private Label lblText;
+        private Label lblDate;
+        private Label lblNotes;
+
         protected override void Dispose(bool disposing)
         {
             if (disposing && (components != null))
-            {
                 components.Dispose();
-            }
             base.Dispose(disposing);
         }
 
-        #region Windows Form Designer generated code
-
-        /// <summary>
-        ///  Required method for Designer support - do not modify
-        ///  the contents of this method with the code editor.
-        /// </summary>
         private void InitializeComponent()
         {
-            button1 = new Button();
-            listBox1 = new ListBox();
-            listBox2 = new ListBox();
-            listBox3 = new ListBox();
-            button2 = new Button();
-            label1 = new Label();
-            label2 = new Label();
-            label3 = new Label();
+            lblTime = new Label();
+            txtText = new TextBox();
+            listBoxNotes = new ListBox();
+            btnAdd = new Button();
+            btnDelete = new Button();
+            btnEdit = new Button();
+            btnSave = new Button();
+            lblText = new Label();
+            lblDate = new Label();
+            lblNotes = new Label();
+            dateTimePicker1 = new DateTimePicker();
             SuspendLayout();
             //
-            // button1
+            // lblTime
             //
-            button1.Location = new Point(356, 267);
-            button1.Margin = new Padding(3, 2, 3, 2);
-            button1.Name = "button1";
-            button1.Size = new Size(173, 22);
-            button1.TabIndex = 0;
-            button1.Text = "Добавить заявку";
-            button1.UseVisualStyleBackColor = true;
-            button1.Click += button1_Click;
+            lblTime.AutoSize = true;
+            lblTime.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            lblTime.Location = new Point(20, 15);
+            lblTime.Name = "lblTime";
+            lblTime.Size = new Size(115, 20);
+            lblTime.TabIndex = 0;
+            lblTime.Text = "Текущее время";
             //
-            // listBox1
+            // txtText
             //
-            listBox1.FormattingEnabled = true;
-            listBox1.ItemHeight = 15;
-            listBox1.Location = new Point(22, 55);
-            listBox1.Margin = new Padding(3, 2, 3, 2);
-            listBox1.Name = "listBox1";
-            listBox1.Size = new Size(204, 184);
-            listBox1.TabIndex = 1;
-            listBox1.SelectedIndexChanged += listBox1_SelectedIndexChanged;
+            txtText.Location = new Point(20, 70);
+            txtText.Multiline = true;
+            txtText.Name = "txtText";
+            txtText.Size = new Size(430, 60);
+            txtText.TabIndex = 2;
             //
-            // listBox2
+            // listBoxNotes
             //
-            listBox2.FormattingEnabled = true;
-            listBox2.ItemHeight = 15;
-            listBox2.Location = new Point(245, 55);
-            listBox2.Margin = new Padding(3, 2, 3, 2);
-            listBox2.Name = "listBox2";
-            listBox2.Size = new Size(193, 169);
-            listBox2.TabIndex = 2;
+            listBoxNotes.FormattingEnabled = true;
+            listBoxNotes.Location = new Point(20, 210);
+            listBoxNotes.Name = "listBoxNotes";
+            listBoxNotes.Size = new Size(430, 124);
+            listBoxNotes.TabIndex = 7;
             //
-            // listBox3
+            // btnAdd
             //
-            listBox3.FormattingEnabled = true;
-            listBox3.ItemHeight = 15;
-            listBox3.Location = new Point(457, 55);
-            listBox3.Margin = new Padding(3, 2, 3, 2);
-            listBox3.Name = "listBox3";
-            listBox3.Size = new Size(193, 169);
-            listBox3.TabIndex = 3;
+            btnAdd.Location = new Point(276, 160);
+            btnAdd.Name = "btnAdd";
+            btnAdd.Size = new Size(100, 30);
+            btnAdd.TabIndex = 5;
+            btnAdd.Text = "Добавить";
+            btnAdd.Click += btnAdd_Click;
             //
-            // button2
+            // btnDelete
             //
-            button2.Location = new Point(535, 267);
-            button2.Margin = new Padding(3, 2, 3, 2);
-            button2.Name = "button2";
-            button2.Size = new Size(153, 22);
-            button2.TabIndex = 4;
-            button2.Text = "Сохранить заявки";
-            button2.UseVisualStyleBackColor = true;
-            button2.Click += button2_Click;
+            btnDelete.Location = new Point(382, 160);
+            btnDelete.Name = "btnDelete";
+            btnDelete.Size = new Size(100, 30);
+            btnDelete.TabIndex = 6;
+            btnDelete.Text = "Удалить";
+            btnDelete.Click += btnDelete_Click;
             //
-            // label1
+            // btnEdit
             //
-            label1.AutoSize = true;
-            label1.Location = new Point(22, 28);
-            label1.Name = "label1";
-            label1.Size = new Size(49, 15);
-            label1.TabIndex = 5;
-            label1.Text = "Отделы";
+            btnEdit.Location = new Point(20, 360);
+            btnEdit.Name = "btnEdit";
+            btnEdit.Size = new Size(167, 30);
+            btnEdit.TabIndex = 9;
+            btnEdit.Text = "Редактировать";
+            btnEdit.Click += btnEdit_Click;
             //
-            // label2
+            // btnSave
             //
-            label2.AutoSize = true;
-            label2.Location = new Point(245, 28);
-            label2.Name = "label2";
-            label2.Size = new Size(100, 15);
-            label2.TabIndex = 6;
-            label2.Text = "Заявки от отдела";
+            btnSave.Location = new Point(193, 360);
+            btnSave.Name = "btnSave";
+            btnSave.Size = new Size(100, 30);
+            btnSave.TabIndex = 10;
+            btnSave.Text = "Сохранить";
+            btnSave.Click += btnSave_Click;
             //
-            // label3
+            // lblText
             //
-            label3.AutoSize = true;
-            label3.Location = new Point(457, 28);
-            label3.Name = "label3";
-            label3.Size = new Size(65, 15);
-            label3.TabIndex = 7;
-            label3.Text = "Все заявки";
+            lblText.AutoSize = true;
+            lblText.Location = new Point(20, 50);
+            lblText.Name = "lblText";
+            lblText.Size = new Size(45, 20);
+            lblText.TabIndex = 1;
+            lblText.Text = "Текст";
+            //
+            // lblDate
+            //
+            lblDate.AutoSize = true;
+            lblDate.Location = new Point(20, 140);
+            lblDate.Name = "lblDate";
+            lblDate.Size = new Size(102, 20);
+            lblDate.TabIndex = 3;
+            lblDate.Text = "Дата и время";
+            //
+            // lblNotes
+            //
+            lblNotes.AutoSize = true;
+            lblNotes.Location = new Point(20, 190);
+            lblNotes.Name = "lblNotes";
+            lblNotes.Size = new Size(147, 20);
+            lblNotes.TabIndex = 8;
+            lblNotes.Text = "Список сообщений:";
+            //
+            // dateTimePicker1
+            //
+            dateTimePicker1.Location = new Point(20, 163);
+            dateTimePicker1.Name = "dateTimePicker1";
+            dateTimePicker1.Size = new Size(250, 27);
+            dateTimePicker1.TabIndex = 11;
             //
             // Form1
             //
-            AutoScaleDimensions = new SizeF(7F, 15F);
-            AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(700, 338);
-            Controls.Add(label3);
-            Controls.Add(label2);
-            Controls.Add(label1);
-            Controls.Add(button2);
-            Controls.Add(listBox3);
-            Controls.Add(listBox2);
-            Controls.Add(listBox1);
-            Controls.Add(button1);
-            Margin = new Padding(3, 2, 3, 2);
+            ClientSize = new Size(560, 400);
+            Controls.Add(dateTimePicker1);
+            Controls.Add(lblTime);
+            Controls.Add(lblText);
+            Controls.Add(txtText);
+            Controls.Add(lblDate);
+            Controls.Add(btnAdd);
+            Controls.Add(btnDelete);
+            Controls.Add(listBoxNotes);
+            Controls.Add(lblNotes);
+            Controls.Add(btnEdit);
+            Controls.Add(btnSave);
+            FormBorderStyle = FormBorderStyle.FixedDialog;
+            MaximizeBox = false;
             Name = "Form1";
-            Text = "Form1";
-            Load += Form1_Load;
+            Text = "Записная книжка";
             ResumeLayout(false);
             PerformLayout();
         }
-
-        #endregion
-
-        private Button button1;
-        private ListBox listBox1;
-        private ListBox listBox2;
-        private ListBox listBox3;
-        private Button button2;
-        private Label label1;
-        private Label label2;
-        private Label label3;
+        private DateTimePicker dateTimePicker1;
     }
 }
 
 </code></pre>
-<p>Код для Zayavka.cs</p>
+<p>Код для Note.cs</p>
 <pre><code>
 ﻿using System;
 using System.Collections.Generic;
@@ -6546,16 +6589,19 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Task_1
+namespace AnyaTask6
 {
-    public class Zayavka
+    public class Note
     {
-        public string NameOtdel { get; set; }
-        public Dictionary<string, int> tovari = new Dictionary< string, int>();
+        public DateTime Time { get; set; }
+        public string Text { get; set; }
 
-
-
+        public override string ToString()
+        {
+            return $"{Time} - {Text}";
+        }
     }
+
 }
 
 </code></pre>

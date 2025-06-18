@@ -7,7 +7,7 @@
 >
   <head>
     <title>
-      c# - StreamWriter help (1) - Stack Overflow на русском
+      c# - Extremum search in C# (3) - Stack Overflow на русском
     </title>
     <link
       rel="shortcut icon"
@@ -69,7 +69,7 @@
       name="twitter:title"
       property="og:title"
       itemprop="name"
-      content="StreamWriter help (1)"
+      content="Extremum search in C# (3)"
     />
     <meta
       name="twitter:description"
@@ -107,7 +107,7 @@ namespace Task_1
     <link
       rel="alternate"
       type="application/atom+xml"
-      title="Лента для вопроса «StreamWriter help (1)»"
+      title="Лента для вопроса «Extremum search in C# (3)»"
       href="/feeds/question/1614028"
     />
     <script
@@ -6043,7 +6043,7 @@ namespace Task_1
                 <a
                   href="/questions/1614028/%d0%97%d0%b0%d1%8f%d0%b2%d0%ba%d0%b8-%d0%bd%d0%b0-%d0%ba%d0%b0%d0%bd%d1%86%d1%82%d0%be%d0%b2%d0%b0%d1%80%d1%8b-%d0%bf%d0%be-%d0%be%d1%82%d0%b4%d0%b5%d0%bb%d0%b0%d0%bc-1"
                   class="question-hyperlink"
-                  >StreamWriter help (1)</a
+                  >Extremum search in C# (3)</a
                 >
               </h1>
 
@@ -6279,102 +6279,147 @@ namespace Task_1
                   </div>
 
                   <div class="postcell post-layout--right">
-                    <div class="s-prose js-post-body" itemprop="text">
-                      <p>Код для Form1.cs</p>
+                    <div class="s-prose js-post-body" itemprop="text"><p>Код для ExperimentData.cs</p>
 <pre><code>
-namespace Task_1
+﻿namespace AnyaTask3
+{
+    public class ExperimentData
+    {
+        public string Comment { get; set; }
+        public List<(int Index, double Amplitude)> OriginalData { get; set; } = new();
+        public List<(int Index, double Amplitude)> PositiveExtrema { get; set; } = new();
+        public List<(int Index, double Amplitude)> NegativeExtrema { get; set; } = new();
+    }
+}
+
+</code></pre>
+<p>Код для Form1.cs</p>
+<pre><code>
+namespace AnyaTask3
 {
     public partial class Form1 : Form
     {
-        public Dictionary<string, Zayavka> spisok;
-        private Dictionary<string, int> globalItems = new Dictionary<string, int>();
+        private ExperimentData experiment = new();
 
         public Form1()
         {
-            spisok = new Dictionary<string, Zayavka>();
             InitializeComponent();
+
+            dgvPositive.SelectionChanged += ExtremumSelectionChanged;
+            dgvNegative.SelectionChanged += ExtremumSelectionChanged;
+
+            dgvOriginal.Columns.Add("Index", "Номер измерения");
+            dgvOriginal.Columns.Add("Value", "Амплитуда");
+
+            dgvPositive.Columns.Add("Index", "Номер измерения");
+            dgvPositive.Columns.Add("Value", "Амплитуда");
+
+            dgvNegative.Columns.Add("Index", "Номер измерения");
+            dgvNegative.Columns.Add("Value", "Амплитуда");
         }
 
-        private void Form1_Load(object sender, EventArgs e)
+        private void UpdateUI()
         {
+            dgvOriginal.Rows.Clear();
+            foreach (var (i, val) in experiment.OriginalData)
+                dgvOriginal.Rows.Add(i, val);
 
+            dgvPositive.Rows.Clear();
+            foreach (var (i, val) in experiment.PositiveExtrema)
+                dgvPositive.Rows.Add(i, val);
+
+            dgvNegative.Rows.Clear();
+            foreach (var (i, val) in experiment.NegativeExtrema)
+                dgvNegative.Rows.Add(i, val);
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void ExtremumSelectionChanged(object sender, EventArgs e)
         {
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            DialogResult dialogResult = openFileDialog.ShowDialog();
-            if (dialogResult == DialogResult.OK)
+            var grid = sender as DataGridView;
+            if (grid.SelectedRows.Count > 0)
             {
-                string[] line = File.ReadAllLines(openFileDialog.FileName);
-                string NameOtdel = line[0];
-                if (spisok.ContainsKey(NameOtdel))
+                int index = (int)grid.SelectedRows[0].Cells[0].Value;
+                foreach (DataGridViewRow row in dgvOriginal.Rows)
                 {
-                    MessageBox.Show("Заявка уже была обработана");
-                    return;
-                }
-                Zayavka zayavka = new Zayavka();
-                zayavka.NameOtdel = NameOtdel;
-                for (int i = 1; i < line.Length; i++)
-                {
-                    string[] parts = line[i].Split("-");
-                    string NameTovar = parts[0];
-                    int TovarCount = int.Parse(parts[1]);
-                    zayavka.tovari[NameTovar] = TovarCount;
-
-                    if (globalItems.ContainsKey(NameTovar))
-                        globalItems[NameTovar] += TovarCount;
-                    else
-                        globalItems[NameTovar] = TovarCount;
-                }
-                spisok[zayavka.NameOtdel] = zayavka;
-                RefreshOtdelList();
-                RefreshGlobalList();
-            }
-        }
-
-        private void RefreshOtdelList()
-        {
-            listBox1.Items.Clear();
-            listBox1.Items.AddRange(spisok.Keys.ToArray());
-        }
-
-        private void RefreshGlobalList()
-        {
-            listBox3.Items.Clear();
-            foreach (var item in globalItems)
-            {
-                listBox3.Items.Add($"{item.Key} - {item.Value}");
-            }
-        }
-
-        private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            listBox2.Items.Clear();
-
-            if (listBox1.SelectedItem is string otdel)
-            {
-                var items = spisok[otdel].tovari;
-                foreach (var item in items)
-                {
-                    listBox2.Items.Add($"{item.Key} - {item.Value}");
-                }
-            }
-        }
-
-        private void button2_Click(object sender, EventArgs e)
-        {
-            SaveFileDialog sfd = new SaveFileDialog();
-
-            if (sfd.ShowDialog() == DialogResult.OK)
-            {
-                using (StreamWriter sw = new StreamWriter(sfd.FileName))
-                {
-                    foreach (var item in globalItems)
+                    if ((int)row.Cells[0].Value == index)
                     {
-                        sw.WriteLine($"{item.Key} - {item.Value}");
+                        row.Selected = true;
+                        dgvOriginal.FirstDisplayedScrollingRowIndex = row.Index;
+                        break;
                     }
                 }
+            }
+        }
+
+        private void btnGenerate_Click(object sender, EventArgs e)
+        {
+            double time = double.Parse(txtTime.Text);
+            double freq = double.Parse(txtFreq.Text);
+            double a = double.Parse(txtA.Text);
+            double b = double.Parse(txtB.Text);
+            double c = double.Parse(txtC.Text);
+            double U0 = double.Parse(txtU0.Text);
+
+            experiment.OriginalData = SignalProcessor.GenerateSignal(time, freq, a, b, c, U0);
+            SignalProcessor.FindExtrema(experiment.OriginalData, out var pos, out var neg);
+            experiment.PositiveExtrema = pos;
+            experiment.NegativeExtrema = neg;
+
+            UpdateUI();
+        }
+
+        private void btnSave_Click(object sender, EventArgs e)
+        {
+            experiment.Comment = txtComment.Text;
+
+            SaveFileDialog dlg = new SaveFileDialog();
+            if (dlg.ShowDialog() == DialogResult.OK)
+            {
+                using StreamWriter writer = new(dlg.FileName);
+                writer.WriteLine(experiment.Comment);
+                writer.WriteLine("[DATA]");
+                foreach (var (i, v) in experiment.OriginalData)
+                    writer.WriteLine($"{i} {v}");
+
+                writer.WriteLine("[POSITIVE]");
+                foreach (var (i, v) in experiment.PositiveExtrema)
+                    writer.WriteLine($"{i} {v}");
+
+                writer.WriteLine("[NEGATIVE]");
+                foreach (var (i, v) in experiment.NegativeExtrema)
+                    writer.WriteLine($"{i} {v}");
+            }
+        }
+
+        private void btnLoad_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog dlg = new OpenFileDialog();
+            if (dlg.ShowDialog() == DialogResult.OK)
+            {
+                var lines = File.ReadAllLines(dlg.FileName);
+                experiment = new ExperimentData();
+
+                int mode = 0; // 0 - comment, 1 - data, 2 - pos, 3 - neg
+                foreach (var line in lines)
+                {
+                    if (line == "[DATA]") { mode = 1; continue; }
+                    if (line == "[POSITIVE]") { mode = 2; continue; }
+                    if (line == "[NEGATIVE]") { mode = 3; continue; }
+                    if (mode == 0)
+                    {
+                        experiment.Comment = line;
+                        txtComment.Text = line;
+                    }
+                    else
+                    {
+                        var parts = line.Split(' ');
+                        var pair = (int.Parse(parts[0]), double.Parse(parts[1]));
+                        if (mode == 1) experiment.OriginalData.Add(pair);
+                        if (mode == 2) experiment.PositiveExtrema.Add(pair);
+                        if (mode == 3) experiment.NegativeExtrema.Add(pair);
+                    }
+                }
+                UpdateUI();
             }
         }
     }
@@ -6383,7 +6428,7 @@ namespace Task_1
 </code></pre>
 <p>Код для Form1.Designer.cs</p>
 <pre><code>
-﻿namespace Task_1
+﻿namespace AnyaTask3
 {
     partial class Form1
     {
@@ -6413,153 +6458,328 @@ namespace Task_1
         /// </summary>
         private void InitializeComponent()
         {
-            button1 = new Button();
-            listBox1 = new ListBox();
-            listBox2 = new ListBox();
-            listBox3 = new ListBox();
-            button2 = new Button();
+            txtComment = new TextBox();
+            btnGenerate = new Button();
+            btnSave = new Button();
+            btnLoad = new Button();
+            dgvOriginal = new DataGridView();
+            dgvPositive = new DataGridView();
+            dgvNegative = new DataGridView();
+            txtTime = new TextBox();
+            txtFreq = new TextBox();
+            txtA = new TextBox();
+            txtB = new TextBox();
+            txtC = new TextBox();
+            txtU0 = new TextBox();
             label1 = new Label();
             label2 = new Label();
             label3 = new Label();
+            label4 = new Label();
+            label5 = new Label();
+            label6 = new Label();
+            label7 = new Label();
+            ((System.ComponentModel.ISupportInitialize)dgvOriginal).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)dgvPositive).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)dgvNegative).BeginInit();
             SuspendLayout();
             //
-            // button1
+            // txtComment
             //
-            button1.Location = new Point(356, 267);
-            button1.Margin = new Padding(3, 2, 3, 2);
-            button1.Name = "button1";
-            button1.Size = new Size(173, 22);
-            button1.TabIndex = 0;
-            button1.Text = "Добавить заявку";
-            button1.UseVisualStyleBackColor = true;
-            button1.Click += button1_Click;
+            txtComment.Location = new Point(123, 29);
+            txtComment.Margin = new Padding(3, 2, 3, 2);
+            txtComment.Name = "txtComment";
+            txtComment.Size = new Size(110, 23);
+            txtComment.TabIndex = 0;
             //
-            // listBox1
+            // btnGenerate
             //
-            listBox1.FormattingEnabled = true;
-            listBox1.ItemHeight = 15;
-            listBox1.Location = new Point(22, 55);
-            listBox1.Margin = new Padding(3, 2, 3, 2);
-            listBox1.Name = "listBox1";
-            listBox1.Size = new Size(204, 184);
-            listBox1.TabIndex = 1;
-            listBox1.SelectedIndexChanged += listBox1_SelectedIndexChanged;
+            btnGenerate.Location = new Point(33, 414);
+            btnGenerate.Margin = new Padding(3, 2, 3, 2);
+            btnGenerate.Name = "btnGenerate";
+            btnGenerate.Size = new Size(114, 22);
+            btnGenerate.TabIndex = 1;
+            btnGenerate.Text = "Сгенерировать";
+            btnGenerate.UseVisualStyleBackColor = true;
+            btnGenerate.Click += btnGenerate_Click;
             //
-            // listBox2
+            // btnSave
             //
-            listBox2.FormattingEnabled = true;
-            listBox2.ItemHeight = 15;
-            listBox2.Location = new Point(245, 55);
-            listBox2.Margin = new Padding(3, 2, 3, 2);
-            listBox2.Name = "listBox2";
-            listBox2.Size = new Size(193, 169);
-            listBox2.TabIndex = 2;
+            btnSave.Location = new Point(256, 27);
+            btnSave.Margin = new Padding(3, 2, 3, 2);
+            btnSave.Name = "btnSave";
+            btnSave.Size = new Size(82, 22);
+            btnSave.TabIndex = 2;
+            btnSave.Text = "Сохранить";
+            btnSave.UseVisualStyleBackColor = true;
+            btnSave.Click += btnSave_Click;
             //
-            // listBox3
+            // btnLoad
             //
-            listBox3.FormattingEnabled = true;
-            listBox3.ItemHeight = 15;
-            listBox3.Location = new Point(457, 55);
-            listBox3.Margin = new Padding(3, 2, 3, 2);
-            listBox3.Name = "listBox3";
-            listBox3.Size = new Size(193, 169);
-            listBox3.TabIndex = 3;
+            btnLoad.Location = new Point(344, 28);
+            btnLoad.Margin = new Padding(3, 2, 3, 2);
+            btnLoad.Name = "btnLoad";
+            btnLoad.Size = new Size(82, 22);
+            btnLoad.TabIndex = 3;
+            btnLoad.Text = "Загрузить";
+            btnLoad.UseVisualStyleBackColor = true;
+            btnLoad.Click += btnLoad_Click;
             //
-            // button2
+            // dgvOriginal
             //
-            button2.Location = new Point(535, 267);
-            button2.Margin = new Padding(3, 2, 3, 2);
-            button2.Name = "button2";
-            button2.Size = new Size(153, 22);
-            button2.TabIndex = 4;
-            button2.Text = "Сохранить заявки";
-            button2.UseVisualStyleBackColor = true;
-            button2.Click += button2_Click;
+            dgvOriginal.AllowUserToAddRows = false;
+            dgvOriginal.AllowUserToDeleteRows = false;
+            dgvOriginal.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvOriginal.Location = new Point(33, 80);
+            dgvOriginal.Margin = new Padding(3, 2, 3, 2);
+            dgvOriginal.Name = "dgvOriginal";
+            dgvOriginal.ReadOnly = true;
+            dgvOriginal.RowHeadersWidth = 51;
+            dgvOriginal.Size = new Size(193, 141);
+            dgvOriginal.TabIndex = 4;
+            //
+            // dgvPositive
+            //
+            dgvPositive.AllowUserToAddRows = false;
+            dgvPositive.AllowUserToDeleteRows = false;
+            dgvPositive.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvPositive.Location = new Point(245, 80);
+            dgvPositive.Margin = new Padding(3, 2, 3, 2);
+            dgvPositive.Name = "dgvPositive";
+            dgvPositive.ReadOnly = true;
+            dgvPositive.RowHeadersWidth = 51;
+            dgvPositive.Size = new Size(193, 141);
+            dgvPositive.TabIndex = 5;
+            //
+            // dgvNegative
+            //
+            dgvNegative.AllowUserToAddRows = false;
+            dgvNegative.AllowUserToDeleteRows = false;
+            dgvNegative.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvNegative.Location = new Point(455, 80);
+            dgvNegative.Margin = new Padding(3, 2, 3, 2);
+            dgvNegative.Name = "dgvNegative";
+            dgvNegative.ReadOnly = true;
+            dgvNegative.RowHeadersWidth = 51;
+            dgvNegative.Size = new Size(193, 141);
+            dgvNegative.TabIndex = 6;
+            //
+            // txtTime
+            //
+            txtTime.Location = new Point(162, 233);
+            txtTime.Margin = new Padding(3, 2, 3, 2);
+            txtTime.Name = "txtTime";
+            txtTime.Size = new Size(110, 23);
+            txtTime.TabIndex = 7;
+            //
+            // txtFreq
+            //
+            txtFreq.Location = new Point(89, 269);
+            txtFreq.Margin = new Padding(3, 2, 3, 2);
+            txtFreq.Name = "txtFreq";
+            txtFreq.Size = new Size(110, 23);
+            txtFreq.TabIndex = 8;
+            //
+            // txtA
+            //
+            txtA.Location = new Point(132, 300);
+            txtA.Margin = new Padding(3, 2, 3, 2);
+            txtA.Name = "txtA";
+            txtA.Size = new Size(110, 23);
+            txtA.TabIndex = 9;
+            //
+            // txtB
+            //
+            txtB.Location = new Point(132, 325);
+            txtB.Margin = new Padding(3, 2, 3, 2);
+            txtB.Name = "txtB";
+            txtB.Size = new Size(110, 23);
+            txtB.TabIndex = 10;
+            //
+            // txtC
+            //
+            txtC.Location = new Point(132, 350);
+            txtC.Margin = new Padding(3, 2, 3, 2);
+            txtC.Name = "txtC";
+            txtC.Size = new Size(110, 23);
+            txtC.TabIndex = 11;
+            //
+            // txtU0
+            //
+            txtU0.Location = new Point(296, 379);
+            txtU0.Margin = new Padding(3, 2, 3, 2);
+            txtU0.Name = "txtU0";
+            txtU0.Size = new Size(110, 23);
+            txtU0.TabIndex = 12;
             //
             // label1
             //
             label1.AutoSize = true;
-            label1.Location = new Point(22, 28);
+            label1.Location = new Point(33, 236);
             label1.Name = "label1";
-            label1.Size = new Size(49, 15);
-            label1.TabIndex = 5;
-            label1.Text = "Отделы";
+            label1.Size = new Size(123, 15);
+            label1.TabIndex = 13;
+            label1.Text = "Время эксперимента";
             //
             // label2
             //
             label2.AutoSize = true;
-            label2.Location = new Point(245, 28);
+            label2.Location = new Point(33, 32);
             label2.Name = "label2";
-            label2.Size = new Size(100, 15);
-            label2.TabIndex = 6;
-            label2.Text = "Заявки от отдела";
+            label2.Size = new Size(84, 15);
+            label2.TabIndex = 14;
+            label2.Text = "Комментарий";
             //
             // label3
             //
             label3.AutoSize = true;
-            label3.Location = new Point(457, 28);
+            label3.Location = new Point(33, 269);
             label3.Name = "label3";
-            label3.Size = new Size(65, 15);
-            label3.TabIndex = 7;
-            label3.Text = "Все заявки";
+            label3.Size = new Size(50, 15);
+            label3.TabIndex = 15;
+            label3.Text = "Частота";
+            //
+            // label4
+            //
+            label4.AutoSize = true;
+            label4.Location = new Point(33, 304);
+            label4.Name = "label4";
+            label4.Size = new Size(93, 15);
+            label4.TabIndex = 16;
+            label4.Text = "Коэффициент a";
+            //
+            // label5
+            //
+            label5.AutoSize = true;
+            label5.Location = new Point(33, 328);
+            label5.Name = "label5";
+            label5.Size = new Size(94, 15);
+            label5.TabIndex = 17;
+            label5.Text = "Коэффициент b";
+            //
+            // label6
+            //
+            label6.AutoSize = true;
+            label6.Location = new Point(33, 353);
+            label6.Name = "label6";
+            label6.Size = new Size(93, 15);
+            label6.TabIndex = 18;
+            label6.Text = "Коэффициент c";
+            //
+            // label7
+            //
+            label7.AutoSize = true;
+            label7.Location = new Point(33, 382);
+            label7.Name = "label7";
+            label7.Size = new Size(257, 15);
+            label7.TabIndex = 19;
+            label7.Text = "Значение амплитуды в начале эксперимента";
             //
             // Form1
             //
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(700, 338);
+            ClientSize = new Size(700, 447);
+            Controls.Add(label7);
+            Controls.Add(label6);
+            Controls.Add(label5);
+            Controls.Add(label4);
             Controls.Add(label3);
             Controls.Add(label2);
             Controls.Add(label1);
-            Controls.Add(button2);
-            Controls.Add(listBox3);
-            Controls.Add(listBox2);
-            Controls.Add(listBox1);
-            Controls.Add(button1);
+            Controls.Add(txtU0);
+            Controls.Add(txtC);
+            Controls.Add(txtB);
+            Controls.Add(txtA);
+            Controls.Add(txtFreq);
+            Controls.Add(txtTime);
+            Controls.Add(dgvNegative);
+            Controls.Add(dgvPositive);
+            Controls.Add(dgvOriginal);
+            Controls.Add(btnLoad);
+            Controls.Add(btnSave);
+            Controls.Add(btnGenerate);
+            Controls.Add(txtComment);
             Margin = new Padding(3, 2, 3, 2);
             Name = "Form1";
             Text = "Form1";
-            Load += Form1_Load;
+            ((System.ComponentModel.ISupportInitialize)dgvOriginal).EndInit();
+            ((System.ComponentModel.ISupportInitialize)dgvPositive).EndInit();
+            ((System.ComponentModel.ISupportInitialize)dgvNegative).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
 
         #endregion
 
-        private Button button1;
-        private ListBox listBox1;
-        private ListBox listBox2;
-        private ListBox listBox3;
-        private Button button2;
+        private TextBox txtComment;
+        private Button btnGenerate;
+        private Button btnSave;
+        private Button btnLoad;
+        private DataGridView dgvOriginal;
+        private DataGridView dgvPositive;
+        private DataGridView dgvNegative;
+        private TextBox txtTime;
+        private TextBox txtFreq;
+        private TextBox txtA;
+        private TextBox txtB;
+        private TextBox txtC;
+        private TextBox txtU0;
         private Label label1;
         private Label label2;
         private Label label3;
+        private Label label4;
+        private Label label5;
+        private Label label6;
+        private Label label7;
     }
 }
 
 </code></pre>
-<p>Код для Zayavka.cs</p>
+<p>Код для SignalProcessor.cs</p>
 <pre><code>
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Task_1
+﻿namespace AnyaTask3
 {
-    public class Zayavka
+    public class SignalProcessor
     {
-        public string NameOtdel { get; set; }
-        public Dictionary<string, int> tovari = new Dictionary< string, int>();
+        public static List<(int, double)> GenerateSignal(double time, double frequency, double a, double b, double c, double U0)
+        {
+            List<(int, double)> result = new();
+            int count = (int)(time * frequency);
+            double dt = 1.0 / frequency;
 
+            for (int i = 0; i < count; i++)
+            {
+                double t = i * dt;
+                double U = U0 - b * t * Math.Cos(a * t + c);
+                result.Add((i, U));
+            }
+            return result;
+        }
 
+        public static void FindExtrema(List<(int Index, double Value)> data,
+                                       out List<(int, double)> positive,
+                                       out List<(int, double)> negative)
+        {
+            positive = new();
+            negative = new();
 
+            for (int i = 1; i < data.Count - 1; i++)
+            {
+                double prev = data[i - 1].Value;
+                double curr = data[i].Value;
+                double next = data[i + 1].Value;
+
+                if (curr > prev && curr > next)
+                    positive.Add(data[i]);
+                else if (curr < prev && curr < next)
+                    negative.Add(data[i]);
+            }
+        }
     }
+
 }
 
-</code></pre>
-                    </div>
+</code></pre></div>
 
                     <div class="mt24 mb12">
                       <div class="post-taglist d-flex gs4 gsy fd-column">

@@ -7,7 +7,8 @@
 >
   <head>
     <title>
-      c# - StreamWriter help (1) - Stack Overflow на русском
+      c# - C# how to save data of experiment (9) - Stack Overflow на
+      русском
     </title>
     <link
       rel="shortcut icon"
@@ -69,7 +70,7 @@
       name="twitter:title"
       property="og:title"
       itemprop="name"
-      content="StreamWriter help (1)"
+      content="C# how to save data of experiment (9)"
     />
     <meta
       name="twitter:description"
@@ -107,7 +108,7 @@ namespace Task_1
     <link
       rel="alternate"
       type="application/atom+xml"
-      title="Лента для вопроса «StreamWriter help (1)»"
+      title="Лента для вопроса «C# how to save data of experiment (9)»"
       href="/feeds/question/1614028"
     />
     <script
@@ -6043,7 +6044,7 @@ namespace Task_1
                 <a
                   href="/questions/1614028/%d0%97%d0%b0%d1%8f%d0%b2%d0%ba%d0%b8-%d0%bd%d0%b0-%d0%ba%d0%b0%d0%bd%d1%86%d1%82%d0%be%d0%b2%d0%b0%d1%80%d1%8b-%d0%bf%d0%be-%d0%be%d1%82%d0%b4%d0%b5%d0%bb%d0%b0%d0%bc-1"
                   class="question-hyperlink"
-                  >StreamWriter help (1)</a
+                  >C# how to save data of experiment (9)</a
                 >
               </h1>
 
@@ -6280,99 +6281,150 @@ namespace Task_1
 
                   <div class="postcell post-layout--right">
                     <div class="s-prose js-post-body" itemprop="text">
-                      <p>Код для Form1.cs</p>
+                      <p>Код для Datchik.cs</p>
 <pre><code>
-namespace Task_1
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace AnyaTask9
+{
+    public class Datchik
+    {
+        public string Name;
+        public List<double> Znachenia = new List<double>();
+
+        public override string ToString()
+        {
+            return Name;
+        }
+    }
+}
+
+</code></pre>
+<p>Код для Form1.cs</p>
+<pre><code>
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace AnyaTask9
 {
     public partial class Form1 : Form
     {
-        public Dictionary<string, Zayavka> spisok;
-        private Dictionary<string, int> globalItems = new Dictionary<string, int>();
+
+        public List<Datchik> DatchikList = new List<Datchik>();
 
         public Form1()
         {
-            spisok = new Dictionary<string, Zayavka>();
             InitializeComponent();
-        }
-
-        private void Form1_Load(object sender, EventArgs e)
-        {
-
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            DialogResult dialogResult = openFileDialog.ShowDialog();
-            if (dialogResult == DialogResult.OK)
+            OpenFileDialog ofd = new OpenFileDialog();
+            if (ofd.ShowDialog() == DialogResult.OK)
             {
-                string[] line = File.ReadAllLines(openFileDialog.FileName);
-                string NameOtdel = line[0];
-                if (spisok.ContainsKey(NameOtdel))
-                {
-                    MessageBox.Show("Заявка уже была обработана");
-                    return;
-                }
-                Zayavka zayavka = new Zayavka();
-                zayavka.NameOtdel = NameOtdel;
-                for (int i = 1; i < line.Length; i++)
-                {
-                    string[] parts = line[i].Split("-");
-                    string NameTovar = parts[0];
-                    int TovarCount = int.Parse(parts[1]);
-                    zayavka.tovari[NameTovar] = TovarCount;
+                string[] lines = File.ReadAllLines(ofd.FileName);
+                int kolvo = int.Parse(lines[0]);
+                int chastota = int.Parse(lines[1]);
 
-                    if (globalItems.ContainsKey(NameTovar))
-                        globalItems[NameTovar] += TovarCount;
-                    else
-                        globalItems[NameTovar] = TovarCount;
+                int skip = 2;
+
+                int datchikLinesKolvo = (chastota + 1);
+                for (int i = 0; i < kolvo; i++)
+                {
+                    Datchik datchik = new Datchik();
+                    datchik.Name = lines[skip + i * datchikLinesKolvo];
+                    for (int j = i * datchikLinesKolvo + 1; j < chastota + i * datchikLinesKolvo + 1; j++)
+                    {
+                        datchik.Znachenia.Add(double.Parse(lines[skip + j]));
+                    }
+
+                    DatchikList.Add(datchik);
                 }
-                spisok[zayavka.NameOtdel] = zayavka;
-                RefreshOtdelList();
-                RefreshGlobalList();
+
+                string text = "";
+                foreach (string line in lines)
+                {
+                    text += line + "\n";
+                }
+
+                label1.Text = text;
             }
-        }
 
-        private void RefreshOtdelList()
-        {
             listBox1.Items.Clear();
-            listBox1.Items.AddRange(spisok.Keys.ToArray());
-        }
-
-        private void RefreshGlobalList()
-        {
-            listBox3.Items.Clear();
-            foreach (var item in globalItems)
-            {
-                listBox3.Items.Add($"{item.Key} - {item.Value}");
-            }
+            listBox1.Items.AddRange(DatchikList.ToArray());
         }
 
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            listBox2.Items.Clear();
-
-            if (listBox1.SelectedItem is string otdel)
+            if (listBox1.SelectedItem is Datchik datchik)
             {
-                var items = spisok[otdel].tovari;
-                foreach (var item in items)
-                {
-                    listBox2.Items.Add($"{item.Key} - {item.Value}");
+                listBox2.Items.Clear();
+
+                string[] znacheniaStr = new string[datchik.Znachenia.Count];
+
+                for (int i = 0; i < znacheniaStr.Length; i++) {
+                    znacheniaStr[i] = datchik.Znachenia[i].ToString();
                 }
+
+                listBox2.Items.AddRange(znacheniaStr);
             }
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            SaveFileDialog sfd = new SaveFileDialog();
-
-            if (sfd.ShowDialog() == DialogResult.OK)
+            if (listBox1.SelectedIndices.Count > 0)
             {
-                using (StreamWriter sw = new StreamWriter(sfd.FileName))
+                SaveFileDialog saveFileDialog = new SaveFileDialog();
+                if (saveFileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    foreach (var item in globalItems)
+                    using (StreamWriter sw = new StreamWriter(saveFileDialog.FileName))
                     {
-                        sw.WriteLine($"{item.Key} - {item.Value}");
+                        sw.WriteLine(listBox1.SelectedIndices.Count);
+                        sw.WriteLine(DatchikList[0].Znachenia.Count);
+
+                        foreach (int index in listBox1.SelectedIndices)
+                        {
+                            Datchik datchik = DatchikList[index];
+
+                            sw.WriteLine(datchik.Name);
+                            foreach (double znach in datchik.Znachenia)
+                            {
+                                sw.WriteLine(znach);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            FolderBrowserDialog folderDialog = new FolderBrowserDialog();
+            if (folderDialog.ShowDialog() == DialogResult.OK)
+            {
+                foreach (Datchik datchik in DatchikList)
+                {
+                    string datchikFile = Path.Combine(folderDialog.SelectedPath, datchik.Name + ".txt");
+                    using (StreamWriter sw = new StreamWriter(datchikFile))
+                    {
+                        sw.WriteLine(datchik.Name);
+                        sw.WriteLine(datchik.Znachenia.Count);
+                        foreach (double znach in datchik.Znachenia)
+                        {
+                            sw.WriteLine(znach);
+                        }
                     }
                 }
             }
@@ -6383,17 +6435,17 @@ namespace Task_1
 </code></pre>
 <p>Код для Form1.Designer.cs</p>
 <pre><code>
-﻿namespace Task_1
+﻿namespace AnyaTask9
 {
     partial class Form1
     {
         /// <summary>
-        ///  Required designer variable.
+        /// Required designer variable.
         /// </summary>
         private System.ComponentModel.IContainer components = null;
 
         /// <summary>
-        ///  Clean up any resources being used.
+        /// Clean up any resources being used.
         /// </summary>
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
@@ -6408,157 +6460,108 @@ namespace Task_1
         #region Windows Form Designer generated code
 
         /// <summary>
-        ///  Required method for Designer support - do not modify
-        ///  the contents of this method with the code editor.
+        /// Required method for Designer support - do not modify
+        /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent()
         {
-            button1 = new Button();
-            listBox1 = new ListBox();
-            listBox2 = new ListBox();
-            listBox3 = new ListBox();
-            button2 = new Button();
-            label1 = new Label();
-            label2 = new Label();
-            label3 = new Label();
-            SuspendLayout();
+            this.button1 = new System.Windows.Forms.Button();
+            this.listBox1 = new System.Windows.Forms.ListBox();
+            this.listBox2 = new System.Windows.Forms.ListBox();
+            this.button2 = new System.Windows.Forms.Button();
+            this.button3 = new System.Windows.Forms.Button();
+            this.label1 = new System.Windows.Forms.Label();
+            this.SuspendLayout();
             //
             // button1
             //
-            button1.Location = new Point(356, 267);
-            button1.Margin = new Padding(3, 2, 3, 2);
-            button1.Name = "button1";
-            button1.Size = new Size(173, 22);
-            button1.TabIndex = 0;
-            button1.Text = "Добавить заявку";
-            button1.UseVisualStyleBackColor = true;
-            button1.Click += button1_Click;
+            this.button1.Location = new System.Drawing.Point(24, 397);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 0;
+            this.button1.Text = "Загрузить";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             //
             // listBox1
             //
-            listBox1.FormattingEnabled = true;
-            listBox1.ItemHeight = 15;
-            listBox1.Location = new Point(22, 55);
-            listBox1.Margin = new Padding(3, 2, 3, 2);
-            listBox1.Name = "listBox1";
-            listBox1.Size = new Size(204, 184);
-            listBox1.TabIndex = 1;
-            listBox1.SelectedIndexChanged += listBox1_SelectedIndexChanged;
+            this.listBox1.FormattingEnabled = true;
+            this.listBox1.Location = new System.Drawing.Point(24, 25);
+            this.listBox1.Name = "listBox1";
+            this.listBox1.SelectionMode = System.Windows.Forms.SelectionMode.MultiSimple;
+            this.listBox1.Size = new System.Drawing.Size(229, 355);
+            this.listBox1.TabIndex = 1;
+            this.listBox1.SelectedIndexChanged += new System.EventHandler(this.listBox1_SelectedIndexChanged);
             //
             // listBox2
             //
-            listBox2.FormattingEnabled = true;
-            listBox2.ItemHeight = 15;
-            listBox2.Location = new Point(245, 55);
-            listBox2.Margin = new Padding(3, 2, 3, 2);
-            listBox2.Name = "listBox2";
-            listBox2.Size = new Size(193, 169);
-            listBox2.TabIndex = 2;
-            //
-            // listBox3
-            //
-            listBox3.FormattingEnabled = true;
-            listBox3.ItemHeight = 15;
-            listBox3.Location = new Point(457, 55);
-            listBox3.Margin = new Padding(3, 2, 3, 2);
-            listBox3.Name = "listBox3";
-            listBox3.Size = new Size(193, 169);
-            listBox3.TabIndex = 3;
+            this.listBox2.FormattingEnabled = true;
+            this.listBox2.Location = new System.Drawing.Point(259, 25);
+            this.listBox2.Name = "listBox2";
+            this.listBox2.Size = new System.Drawing.Size(224, 355);
+            this.listBox2.TabIndex = 2;
             //
             // button2
             //
-            button2.Location = new Point(535, 267);
-            button2.Margin = new Padding(3, 2, 3, 2);
-            button2.Name = "button2";
-            button2.Size = new Size(153, 22);
-            button2.TabIndex = 4;
-            button2.Text = "Сохранить заявки";
-            button2.UseVisualStyleBackColor = true;
-            button2.Click += button2_Click;
+            this.button2.Location = new System.Drawing.Point(115, 397);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(124, 23);
+            this.button2.TabIndex = 3;
+            this.button2.Text = "Сохранить датчик";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
+            //
+            // button3
+            //
+            this.button3.Location = new System.Drawing.Point(259, 397);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(98, 23);
+            this.button3.TabIndex = 4;
+            this.button3.Text = "Сохранить все";
+            this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
             //
             // label1
             //
-            label1.AutoSize = true;
-            label1.Location = new Point(22, 28);
-            label1.Name = "label1";
-            label1.Size = new Size(49, 15);
-            label1.TabIndex = 5;
-            label1.Text = "Отделы";
-            //
-            // label2
-            //
-            label2.AutoSize = true;
-            label2.Location = new Point(245, 28);
-            label2.Name = "label2";
-            label2.Size = new Size(100, 15);
-            label2.TabIndex = 6;
-            label2.Text = "Заявки от отдела";
-            //
-            // label3
-            //
-            label3.AutoSize = true;
-            label3.Location = new Point(457, 28);
-            label3.Name = "label3";
-            label3.Size = new Size(65, 15);
-            label3.TabIndex = 7;
-            label3.Text = "Все заявки";
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(502, 25);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(35, 13);
+            this.label1.TabIndex = 5;
+            this.label1.Text = "label1";
             //
             // Form1
             //
-            AutoScaleDimensions = new SizeF(7F, 15F);
-            AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(700, 338);
-            Controls.Add(label3);
-            Controls.Add(label2);
-            Controls.Add(label1);
-            Controls.Add(button2);
-            Controls.Add(listBox3);
-            Controls.Add(listBox2);
-            Controls.Add(listBox1);
-            Controls.Add(button1);
-            Margin = new Padding(3, 2, 3, 2);
-            Name = "Form1";
-            Text = "Form1";
-            Load += Form1_Load;
-            ResumeLayout(false);
-            PerformLayout();
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.button3);
+            this.Controls.Add(this.button2);
+            this.Controls.Add(this.listBox2);
+            this.Controls.Add(this.listBox1);
+            this.Controls.Add(this.button1);
+            this.Name = "Form1";
+            this.Text = "Form1";
+            this.ResumeLayout(false);
+            this.PerformLayout();
+
         }
 
         #endregion
 
-        private Button button1;
-        private ListBox listBox1;
-        private ListBox listBox2;
-        private ListBox listBox3;
-        private Button button2;
-        private Label label1;
-        private Label label2;
-        private Label label3;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.ListBox listBox1;
+        private System.Windows.Forms.ListBox listBox2;
+        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.Label label1;
     }
 }
 
-</code></pre>
-<p>Код для Zayavka.cs</p>
-<pre><code>
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Task_1
-{
-    public class Zayavka
-    {
-        public string NameOtdel { get; set; }
-        public Dictionary<string, int> tovari = new Dictionary< string, int>();
-
-
-
-    }
-}
 
 </code></pre>
+
                     </div>
 
                     <div class="mt24 mb12">
