@@ -6282,7 +6282,7 @@ namespace Task_1
                   <div class="postcell post-layout--right">
                     <div class="s-prose js-post-body" itemprop="text">
                       <p>Код для Form1.cs</p>
-<pre><code>
+                      <pre><code>
 using System.Text.Json;
 using System.Xml.Linq;
 
@@ -6290,7 +6290,7 @@ namespace AnyaTask6
 {
     public partial class Form1 : Form
     {
-        private List<Note> notes = new();
+        private List&lt;Note&gt; notes = new();
         private string filePath = "notes.txt";
         private System.Windows.Forms.Timer checkTimer;
 
@@ -6307,7 +6307,7 @@ namespace AnyaTask6
             if (!File.Exists(filePath)) return;
 
             string[] lines = File.ReadAllLines(filePath);
-            List<Note> loadedNotes = new List<Note>();
+            List&lt;Note&gt; loadedNotes = new List&lt;Note&gt;();
             foreach (string line in lines)
             {
                 string[] med = line.Split("-", StringSplitOptions.TrimEntries);
@@ -6321,9 +6321,9 @@ namespace AnyaTask6
 
             foreach (var note in loadedNotes)
             {
-                if (note.Time > now)
+                if (note.Time &gt; now)
                     notes.Add(note);
-                else if (note.Time <= now)
+                else if (note.Time &lt;= now)
                     ShowAndRemovePastNote(note);
             }
         }
@@ -6338,7 +6338,7 @@ namespace AnyaTask6
 
         private void SaveNotes()
         {
-            List<Note> sorted = notes.OrderBy(n => n.Time).ToList();
+            List&lt;Note&gt; sorted = notes.OrderBy(n =&gt; n.Time).ToList();
             using (StreamWriter sw = new StreamWriter(filePath))
             {
                 foreach (var note in sorted) {
@@ -6351,7 +6351,7 @@ namespace AnyaTask6
         private void UpdateList()
         {
             listBoxNotes.Items.Clear();
-            foreach (var note in notes.OrderBy(n => n.Time))
+            foreach (var note in notes.OrderBy(n =&gt; n.Time))
                 listBoxNotes.Items.Add(note);
         }
 
@@ -6359,11 +6359,11 @@ namespace AnyaTask6
         {
             checkTimer = new System.Windows.Forms.Timer();
             checkTimer.Interval = 5000;
-            checkTimer.Tick += (s, e) =>
+            checkTimer.Tick += (s, e) =&gt;
             {
                 lblTime.Text = DateTime.Now.ToString();
 
-                var expired = notes.Where(n => n.Time <= DateTime.Now).ToList();
+                var expired = notes.Where(n =&gt; n.Time &lt;= DateTime.Now).ToList();
                 foreach (var note in expired)
                 {
                     ShowAndRemovePastNote(note);
@@ -6380,7 +6380,7 @@ namespace AnyaTask6
             var text = txtText.Text.Trim();
             if (string.IsNullOrWhiteSpace(text)) return;
 
-            if (time <= DateTime.Now)
+            if (time &lt;= DateTime.Now)
             {
                 ShowAndRemovePastNote(new Note { Time = time, Text = text });
                 return;
@@ -6418,8 +6418,8 @@ namespace AnyaTask6
 }
 
 </code></pre>
-<p>Код для Form1.Designer.cs</p>
-<pre><code>
+                      <p>Код для Form1.Designer.cs</p>
+                      <pre><code>
 ﻿namespace AnyaTask6
 {
     partial class Form1
@@ -6439,7 +6439,7 @@ namespace AnyaTask6
 
         protected override void Dispose(bool disposing)
         {
-            if (disposing && (components != null))
+            if (disposing &amp;&amp; (components != null))
                 components.Dispose();
             base.Dispose(disposing);
         }
@@ -6581,8 +6581,8 @@ namespace AnyaTask6
 }
 
 </code></pre>
-<p>Код для Note.cs</p>
-<pre><code>
+                      <p>Код для Note.cs</p>
+                      <pre><code>
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;

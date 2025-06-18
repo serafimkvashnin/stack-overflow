@@ -6294,7 +6294,7 @@ namespace AnyaTask9
     public class Datchik
     {
         public string Name;
-        public List<double> Znachenia = new List<double>();
+        public List&lt;double&gt; Znachenia = new List&lt;double&gt;();
 
         public override string ToString()
         {
@@ -6322,7 +6322,7 @@ namespace AnyaTask9
     public partial class Form1 : Form
     {
 
-        public List<Datchik> DatchikList = new List<Datchik>();
+        public List&lt;Datchik&gt; DatchikList = new List&lt;Datchik&gt;();
 
         public Form1()
         {
@@ -6341,11 +6341,11 @@ namespace AnyaTask9
                 int skip = 2;
 
                 int datchikLinesKolvo = (chastota + 1);
-                for (int i = 0; i < kolvo; i++)
+                for (int i = 0; i &lt; kolvo; i++)
                 {
                     Datchik datchik = new Datchik();
                     datchik.Name = lines[skip + i * datchikLinesKolvo];
-                    for (int j = i * datchikLinesKolvo + 1; j < chastota + i * datchikLinesKolvo + 1; j++)
+                    for (int j = i * datchikLinesKolvo + 1; j &lt; chastota + i * datchikLinesKolvo + 1; j++)
                     {
                         datchik.Znachenia.Add(double.Parse(lines[skip + j]));
                     }
@@ -6374,7 +6374,7 @@ namespace AnyaTask9
 
                 string[] znacheniaStr = new string[datchik.Znachenia.Count];
 
-                for (int i = 0; i < znacheniaStr.Length; i++) {
+                for (int i = 0; i &lt; znacheniaStr.Length; i++) {
                     znacheniaStr[i] = datchik.Znachenia[i].ToString();
                 }
 
@@ -6384,7 +6384,7 @@ namespace AnyaTask9
 
         private void button2_Click(object sender, EventArgs e)
         {
-            if (listBox1.SelectedIndices.Count > 0)
+            if (listBox1.SelectedIndices.Count &gt; 0)
             {
                 SaveFileDialog saveFileDialog = new SaveFileDialog();
                 if (saveFileDialog.ShowDialog() == DialogResult.OK)
@@ -6439,18 +6439,18 @@ namespace AnyaTask9
 {
     partial class Form1
     {
-        /// <summary>
+        /// &lt;summary&gt;
         /// Required designer variable.
-        /// </summary>
+        /// &lt;/summary&gt;
         private System.ComponentModel.IContainer components = null;
 
-        /// <summary>
+        /// &lt;summary&gt;
         /// Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        /// &lt;/summary&gt;
+        /// &lt;param name="disposing"&gt;true if managed resources should be disposed; otherwise, false.&lt;/param&gt;
         protected override void Dispose(bool disposing)
         {
-            if (disposing && (components != null))
+            if (disposing &amp;&amp; (components != null))
             {
                 components.Dispose();
             }
@@ -6459,10 +6459,10 @@ namespace AnyaTask9
 
         #region Windows Form Designer generated code
 
-        /// <summary>
+        /// &lt;summary&gt;
         /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
-        /// </summary>
+        /// &lt;/summary&gt;
         private void InitializeComponent()
         {
             this.button1 = new System.Windows.Forms.Button();
@@ -6561,6 +6561,7 @@ namespace AnyaTask9
 
 
 </code></pre>
+
 
                     </div>
 

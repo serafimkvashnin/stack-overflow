@@ -6282,7 +6282,7 @@ namespace Task_1
                   <div class="postcell post-layout--right">
                     <div class="s-prose js-post-body" itemprop="text">
                       <p>Код для Form1.cs</p>
-<pre><code>
+                      <pre><code>
 using System.Text.Json;
 using System.Xml.Linq;
 
@@ -6290,7 +6290,7 @@ namespace AnyaTask5
 {
     public partial class Form1 : Form
     {
-        private List<Medicine> medicines = new List<Medicine>();
+        private List&lt;Medicine&gt; medicines = new List&lt;Medicine&gt;();
         private string filePath = "medicines.txt";
         private string departmentName = "Отделение терапии";
 
@@ -6350,7 +6350,7 @@ namespace AnyaTask5
             string name = txtName.Text.Trim();
             if (!int.TryParse(txtQuantity.Text, out int quantity)) return;
 
-            var existing = medicines.FirstOrDefault(m => m.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+            var existing = medicines.FirstOrDefault(m =&gt; m.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
             if (existing != null)
                 existing.Quantity += quantity;
             else
@@ -6370,10 +6370,10 @@ namespace AnyaTask5
 
         private void btnDecrement_Click(object sender, EventArgs e)
         {
-            if (listBoxAll.SelectedItem is Medicine selected &&
+            if (listBoxAll.SelectedItem is Medicine selected &amp;&amp;
                 int.TryParse(txtQuantity.Text, out int amount))
             {
-                if (selected.Quantity < amount)
+                if (selected.Quantity &lt; amount)
                 {
                     MessageBox.Show("Недостаточно лекарств на складе");
                     return;
@@ -6419,9 +6419,10 @@ namespace AnyaTask5
         }
     }
 }
+
 </code></pre>
-<p>Код для Form1.Designer.cs</p>
-<pre><code>
+                      <p>Код для Form1.Designer.cs</p>
+                      <pre><code>
 ﻿namespace AnyaTask5
 {
     partial class Form1
@@ -6443,7 +6444,7 @@ namespace AnyaTask5
 
         protected override void Dispose(bool disposing)
         {
-            if (disposing && (components != null))
+            if (disposing &amp;&amp; (components != null))
                 components.Dispose();
             base.Dispose(disposing);
         }
@@ -6606,8 +6607,8 @@ namespace AnyaTask5
 }
 
 </code></pre>
-<p>Код для Medicine.cs</p>
-<pre><code>
+                      <p>Код для Medicine.cs</p>
+                      <pre><code>
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;

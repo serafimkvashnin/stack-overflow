@@ -6282,7 +6282,7 @@ namespace Task_1
                   <div class="postcell post-layout--right">
                     <div class="s-prose js-post-body" itemprop="text">
                       <p>Код для Form1.cs</p>
-<pre><code>
+                      <pre><code>
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -6300,7 +6300,7 @@ namespace AnyaTask7
     public partial class Form1 : Form
     {
         public string Vopros;
-        public List<VoteVariant> Varianti = new List<VoteVariant>();
+        public List&lt;VoteVariant&gt; Varianti = new List&lt;VoteVariant&gt;();
         public string PapkaSokhranen;
         public DateTime NachaloTime;
         public TimeSpan Prodolzhitelnost;
@@ -6325,12 +6325,12 @@ namespace AnyaTask7
             var now = DateTime.Now;
             txtVremya.Text = now.ToString();
 
-            if (now >= NachaloTime && now <= KonecTime)
+            if (now &gt;= NachaloTime &amp;&amp; now &lt;= KonecTime)
             {
                 TimeSpan ostalos = KonecTime - now;
                 lblStatus.Text = $"До конца голосования: {ostalos}";
             }
-            else if (now > KonecTime && KonecTime != DateTime.MinValue)
+            else if (now &gt; KonecTime &amp;&amp; KonecTime != DateTime.MinValue)
             {
                 lblStatus.Text = "Голосование завершено";
 
@@ -6339,7 +6339,7 @@ namespace AnyaTask7
                 foreach (var f in files)
                 {
                     string fileText = File.ReadAllText(f);
-                    if (int.TryParse(fileText, out var nomerVarianta) && nomerVarianta >= 0 && nomerVarianta < Varianti.Count)
+                    if (int.TryParse(fileText, out var nomerVarianta) &amp;&amp; nomerVarianta &gt;= 0 &amp;&amp; nomerVarianta &lt; Varianti.Count)
                     {
                         Varianti[nomerVarianta].KolvoProgolos += 1;
                     }
@@ -6411,24 +6411,24 @@ namespace AnyaTask7
 }
 
 </code></pre>
-<p>Код для Form1.Designer.cs</p>
-<pre><code>
+                      <p>Код для Form1.Designer.cs</p>
+                      <pre><code>
 ﻿namespace AnyaTask7
 {
     partial class Form1
     {
-        /// <summary>
+        /// &lt;summary&gt;
         /// Required designer variable.
-        /// </summary>
+        /// &lt;/summary&gt;
         private System.ComponentModel.IContainer components = null;
 
-        /// <summary>
+        /// &lt;summary&gt;
         /// Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        /// &lt;/summary&gt;
+        /// &lt;param name="disposing"&gt;true if managed resources should be disposed; otherwise, false.&lt;/param&gt;
         protected override void Dispose(bool disposing)
         {
-            if (disposing && (components != null))
+            if (disposing &amp;&amp; (components != null))
             {
                 components.Dispose();
             }
@@ -6437,10 +6437,10 @@ namespace AnyaTask7
 
         #region Windows Form Designer generated code
 
-        /// <summary>
+        /// &lt;summary&gt;
         /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
-        /// </summary>
+        /// &lt;/summary&gt;
         private void InitializeComponent()
         {
             this.txtVopros = new System.Windows.Forms.TextBox();
@@ -6653,8 +6653,8 @@ namespace AnyaTask7
 
 
 </code></pre>
-<p>Код для VoteVariant.cs</p>
-<pre><code>
+                      <p>Код для VoteVariant.cs</p>
+                      <pre><code>
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6676,7 +6676,6 @@ namespace AnyaTask7
 }
 
 </code></pre>
-
                     </div>
 
                     <div class="mt24 mb12">

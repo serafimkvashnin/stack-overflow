@@ -7,8 +7,8 @@
 >
   <head>
     <title>
-      c# - C# store employes with children with BinaryWriter/Reader (10) - Stack Overflow на
-      русском
+      c# - C# store employes with children with BinaryWriter/Reader (10) - Stack
+      Overflow на русском
     </title>
     <link
       rel="shortcut icon"
@@ -6044,7 +6044,8 @@ namespace Task_1
                 <a
                   href="/questions/1614028/%d0%97%d0%b0%d1%8f%d0%b2%d0%ba%d0%b8-%d0%bd%d0%b0-%d0%ba%d0%b0%d0%bd%d1%86%d1%82%d0%be%d0%b2%d0%b0%d1%80%d1%8b-%d0%bf%d0%be-%d0%be%d1%82%d0%b4%d0%b5%d0%bb%d0%b0%d0%bc-1"
                   class="question-hyperlink"
-                  >C# store employes with children with BinaryWriter/Reader (10)</a
+                  >C# store employes with children with BinaryWriter/Reader
+                  (10)</a
                 >
               </h1>
 
@@ -6282,7 +6283,7 @@ namespace Task_1
                   <div class="postcell post-layout--right">
                     <div class="s-prose js-post-body" itemprop="text">
                       <p>Код для Form1.cs</p>
-<pre><code>
+                      <pre><code>
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -6299,7 +6300,7 @@ namespace AnyaTask10
 {
     public partial class Form1 : Form
     {
-        public List<Sotrudnik> SotrudnikList = new List<Sotrudnik>();
+        public List&lt;Sotrudnik&gt; SotrudnikList = new List&lt;Sotrudnik&gt;();
         public Form1()
         {
             InitializeComponent();
@@ -6312,7 +6313,7 @@ namespace AnyaTask10
             {
                 string[] lines = File.ReadAllLines(ofd.FileName);
                 string otdel = lines[0];
-                for (int i = 1; i < lines.Length; i++)
+                for (int i = 1; i &lt; lines.Length; i++)
                 {
                     Sotrudnik so = new Sotrudnik();
                     string[] data = lines[i].Split(new string[] { ", " }, StringSplitOptions.None);
@@ -6324,11 +6325,11 @@ namespace AnyaTask10
                     so.Dolzhnost = data[4];
                     so.SemPolozh = data[5];
 
-                    if (data.Length > 6)
+                    if (data.Length &gt; 6)
                     {
                         int rebenokLines = 2;
                         int rebenokInfoStartIndex = 7;
-                        for (int j = 0; j < int.Parse(data[6]); j++)
+                        for (int j = 0; j &lt; int.Parse(data[6]); j++)
                         {
                             Rebenok rebenok = new Rebenok();
                             rebenok.Name = data[rebenokInfoStartIndex + j * rebenokLines];
@@ -6348,9 +6349,9 @@ namespace AnyaTask10
         {
             string poiskText = textBox1.Text.Trim().ToLower();
 
-            List<Sotrudnik> filtered = new List<Sotrudnik>(SotrudnikList);
+            List&lt;Sotrudnik&gt; filtered = new List&lt;Sotrudnik&gt;(SotrudnikList);
 
-            if (poiskText.Length > 0)
+            if (poiskText.Length &gt; 0)
             {
                 filtered.Clear();
 
@@ -6367,7 +6368,7 @@ namespace AnyaTask10
                     {
                         foreach (Rebenok r in so.Deti)
                         {
-                            if (r.DataRozd > data)
+                            if (r.DataRozd &gt; data)
                             {
                                 filtered.Add(so);
                                 break;
@@ -6386,7 +6387,7 @@ namespace AnyaTask10
             if (listBox1.SelectedItem is Sotrudnik so)
             {
                 string info = $"{so.DataRozd}\n{so.Pol}\n{so.Dolzhnost}\n{so.Obrazovanie}\n{so.SemPolozh}\n";
-                if (so.Deti.Count > 0)
+                if (so.Deti.Count &gt; 0)
                 {
                     info += $"Дети ({so.Deti.Count}):\n";
                     foreach (Rebenok rebenok in so.Deti)
@@ -6404,7 +6405,7 @@ namespace AnyaTask10
             {
                 BinaryReader br = new BinaryReader(File.Open("sotrudniki.txt", FileMode.Open));
                 int count = br.ReadInt32();
-                for (int i = 0; i < count; i++)
+                for (int i = 0; i &lt; count; i++)
                 {
                     Sotrudnik so = new Sotrudnik();
                     so.Otdel = br.ReadString();
@@ -6415,7 +6416,7 @@ namespace AnyaTask10
                     so.Obrazovanie = br.ReadString();
                     so.SemPolozh = br.ReadString();
                     int detiCount = br.ReadInt32();
-                    for (int j = 0; j < detiCount; j++)
+                    for (int j = 0; j &lt; detiCount; j++)
                     {
                         Rebenok rebenok = new Rebenok();
                         rebenok.Name = br.ReadString();
@@ -6454,7 +6455,7 @@ namespace AnyaTask10
 
         private void button3_Click(object sender, EventArgs e)
         {
-            if (listBox1.SelectedIndices.Count > 0)
+            if (listBox1.SelectedIndices.Count &gt; 0)
             {
                 SaveFileDialog saveFileDialog = new SaveFileDialog();
                 if (saveFileDialog.ShowDialog() == DialogResult.OK)
@@ -6465,7 +6466,7 @@ namespace AnyaTask10
                         {
                             Sotrudnik so = SotrudnikList[index];
                             string sotrText = $"{so.Fullname}, {so.DataRozd.ToString("dd.MM.yyyy")}, {so.Pol}, {so.Obrazovanie}, {so.Dolzhnost}, {so.SemPolozh}";
-                            if (so.Deti.Count > 0)
+                            if (so.Deti.Count &gt; 0)
                             {
                                 sotrText += $", {so.Deti.Count}";
                                 foreach (Rebenok rebenok in so.Deti)
@@ -6483,24 +6484,24 @@ namespace AnyaTask10
 }
 
 </code></pre>
-<p>Код для Form1.Designer.cs</p>
-<pre><code>
+                      <p>Код для Form1.Designer.cs</p>
+                      <pre><code>
 ﻿namespace AnyaTask10
 {
     partial class Form1
     {
-        /// <summary>
+        /// &lt;summary&gt;
         /// Required designer variable.
-        /// </summary>
+        /// &lt;/summary&gt;
         private System.ComponentModel.IContainer components = null;
 
-        /// <summary>
+        /// &lt;summary&gt;
         /// Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        /// &lt;/summary&gt;
+        /// &lt;param name="disposing"&gt;true if managed resources should be disposed; otherwise, false.&lt;/param&gt;
         protected override void Dispose(bool disposing)
         {
-            if (disposing && (components != null))
+            if (disposing &amp;&amp; (components != null))
             {
                 components.Dispose();
             }
@@ -6509,10 +6510,10 @@ namespace AnyaTask10
 
         #region Windows Form Designer generated code
 
-        /// <summary>
+        /// &lt;summary&gt;
         /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
-        /// </summary>
+        /// &lt;/summary&gt;
         private void InitializeComponent()
         {
             this.listBox1 = new System.Windows.Forms.ListBox();
@@ -6618,8 +6619,8 @@ namespace AnyaTask10
 
 
 </code></pre>
-<p>Код для Rebenok.cs</p>
-<pre><code>
+                      <p>Код для Rebenok.cs</p>
+                      <pre><code>
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6642,8 +6643,8 @@ namespace AnyaTask10
 }
 
 </code></pre>
-<p>Код для Sotrudnik.cs</p>
-<pre><code>
+                      <p>Код для Sotrudnik.cs</p>
+                      <pre><code>
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6662,7 +6663,7 @@ namespace AnyaTask10
         public string Obrazovanie { get; set; }
         public string Dolzhnost { get; set; }
         public string SemPolozh { get; set; }
-        public List<Rebenok> Deti { get; set; } = new List<Rebenok>();
+        public List&lt;Rebenok&gt; Deti { get; set; } = new List&lt;Rebenok&gt;();
 
         public override string ToString()
         {

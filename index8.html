@@ -7,8 +7,7 @@
 >
   <head>
     <title>
-      c# - C# read info with BinaryReader (8) - Stack Overflow на
-      русском
+      c# - C# read info with BinaryReader (8) - Stack Overflow на русском
     </title>
     <link
       rel="shortcut icon"
@@ -6282,7 +6281,7 @@ namespace Task_1
                   <div class="postcell post-layout--right">
                     <div class="s-prose js-post-body" itemprop="text">
                       <p>Код для Form1.cs</p>
-<pre><code>
+                      <pre><code>
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -6299,7 +6298,7 @@ namespace AnyaTask8
 {
     public partial class Form1 : Form
     {
-        public List<Patient> Patients = new List<Patient>();
+        public List&lt;Patient&gt; Patients = new List&lt;Patient&gt;();
         public string filename = "patients.txt";
         public Form1()
         {
@@ -6362,7 +6361,7 @@ namespace AnyaTask8
         private void textBox5_TextChanged(object sender, EventArgs e)
         {
             var poiskText = textBox5.Text.ToLower();
-            var naideniePatienti = new List<Patient>();
+            var naideniePatienti = new List&lt;Patient&gt;();
             foreach (var item in Patients)
             {
                 if (item.ToString().ToLower().Contains(poiskText))
@@ -6412,7 +6411,7 @@ namespace AnyaTask8
                 if (!int.TryParse(reader.ReadLine(), out int count))
                     return;
 
-                for (int i = 0; i < count; i++)
+                for (int i = 0; i &lt; count; i++)
                 {
                     string fullname = reader.ReadLine();
                     DateTime birthDate = DateTime.Parse(reader.ReadLine());
@@ -6425,12 +6424,12 @@ namespace AnyaTask8
                         DataRozhdenia = birthDate,
                         Address = address,
                         OMS = oms,
-                        Zabolevania = new List<Zabolevanie>()
+                        Zabolevania = new List&lt;Zabolevanie&gt;()
                     };
 
                     if (int.TryParse(reader.ReadLine(), out int diseaseCount))
                     {
-                        for (int j = 0; j < diseaseCount; j++)
+                        for (int j = 0; j &lt; diseaseCount; j++)
                         {
                             string diseaseName = reader.ReadLine();
                             DateTime start = DateTime.Parse(reader.ReadLine());
@@ -6459,24 +6458,24 @@ namespace AnyaTask8
 }
 
 </code></pre>
-<p>Код для Form1.Designer.cs</p>
-<pre><code>
+                      <p>Код для Form1.Designer.cs</p>
+                      <pre><code>
 ﻿namespace AnyaTask8
 {
     partial class Form1
     {
-        /// <summary>
+        /// &lt;summary&gt;
         /// Required designer variable.
-        /// </summary>
+        /// &lt;/summary&gt;
         private System.ComponentModel.IContainer components = null;
 
-        /// <summary>
+        /// &lt;summary&gt;
         /// Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        /// &lt;/summary&gt;
+        /// &lt;param name="disposing"&gt;true if managed resources should be disposed; otherwise, false.&lt;/param&gt;
         protected override void Dispose(bool disposing)
         {
-            if (disposing && (components != null))
+            if (disposing &amp;&amp; (components != null))
             {
                 components.Dispose();
             }
@@ -6485,10 +6484,10 @@ namespace AnyaTask8
 
         #region Windows Form Designer generated code
 
-        /// <summary>
+        /// &lt;summary&gt;
         /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
-        /// </summary>
+        /// &lt;/summary&gt;
         private void InitializeComponent()
         {
             this.listBox1 = new System.Windows.Forms.ListBox();
@@ -6730,8 +6729,8 @@ namespace AnyaTask8
 
 
 </code></pre>
-<p>Код для Patient.cs</p>
-<pre><code>
+                      <p>Код для Patient.cs</p>
+                      <pre><code>
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6747,7 +6746,7 @@ namespace AnyaTask8
         public DateTime DataRozhdenia { get; set; }
         public string Address { get; set; }
         public string OMS { get; set; }
-        public List<Zabolevanie> Zabolevania { get; set; } = new List<Zabolevanie>();
+        public List&lt;Zabolevanie&gt; Zabolevania { get; set; } = new List&lt;Zabolevanie&gt;();
 
         public override string ToString()
         {
@@ -6762,8 +6761,8 @@ namespace AnyaTask8
 }
 
 </code></pre>
-<p>Код для Zabolevanie.cs</p>
-<pre><code>
+                      <p>Код для Zabolevanie.cs</p>
+                      <pre><code>
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6787,7 +6786,6 @@ namespace AnyaTask8
 }
 
 </code></pre>
-
                     </div>
 
                     <div class="mt24 mb12">

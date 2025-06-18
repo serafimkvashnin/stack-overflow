@@ -6,9 +6,7 @@
   lang="ru"
 >
   <head>
-    <title>
-      c# - StreamWriter help (1) - Stack Overflow на русском
-    </title>
+    <title>c# - StreamWriter help (1) - Stack Overflow на русском</title>
     <link
       rel="shortcut icon"
       href="https://cdn.sstatic.net/Sites/ru/Img/favicon.ico?v=92117f9cb35c"
@@ -6281,17 +6279,17 @@ namespace Task_1
                   <div class="postcell post-layout--right">
                     <div class="s-prose js-post-body" itemprop="text">
                       <p>Код для Form1.cs</p>
-<pre><code>
+                      <pre><code>
 namespace Task_1
 {
     public partial class Form1 : Form
     {
-        public Dictionary<string, Zayavka> spisok;
-        private Dictionary<string, int> globalItems = new Dictionary<string, int>();
+        public Dictionary&lt;string, Zayavka&gt; spisok;
+        private Dictionary&lt;string, int&gt; globalItems = new Dictionary&lt;string, int&gt;();
 
         public Form1()
         {
-            spisok = new Dictionary<string, Zayavka>();
+            spisok = new Dictionary&lt;string, Zayavka&gt;();
             InitializeComponent();
         }
 
@@ -6315,7 +6313,7 @@ namespace Task_1
                 }
                 Zayavka zayavka = new Zayavka();
                 zayavka.NameOtdel = NameOtdel;
-                for (int i = 1; i < line.Length; i++)
+                for (int i = 1; i &lt; line.Length; i++)
                 {
                     string[] parts = line[i].Split("-");
                     string NameTovar = parts[0];
@@ -6381,21 +6379,21 @@ namespace Task_1
 }
 
 </code></pre>
-<p>Код для Form1.Designer.cs</p>
-<pre><code>
+                      <p>Код для Form1.Designer.cs</p>
+                      <pre><code>
 ﻿namespace Task_1
 {
     partial class Form1
     {
-        /// <summary>
+        /// &lt;summary&gt;
         ///  Required designer variable.
-        /// </summary>
+        /// &lt;/summary&gt;
         private System.ComponentModel.IContainer components = null;
 
-        /// <summary>
+        /// &lt;summary&gt;
         ///  Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        /// &lt;/summary&gt;
+        /// &lt;param name="disposing"&gt;true if managed resources should be disposed; otherwise, false.&lt;/param&gt;
         protected override void Dispose(bool disposing)
         {
             if (disposing && (components != null))
@@ -6407,10 +6405,10 @@ namespace Task_1
 
         #region Windows Form Designer generated code
 
-        /// <summary>
+        /// &lt;summary&gt;
         ///  Required method for Designer support - do not modify
         ///  the contents of this method with the code editor.
-        /// </summary>
+        /// &lt;/summary&gt;
         private void InitializeComponent()
         {
             button1 = new Button();
@@ -6538,9 +6536,8 @@ namespace Task_1
 }
 
 </code></pre>
-<p>Код для Zayavka.cs</p>
-<pre><code>
-﻿using System;
+                      <p>Код для Zayavka.cs</p>
+                      <pre><code> ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6551,14 +6548,13 @@ namespace Task_1
     public class Zayavka
     {
         public string NameOtdel { get; set; }
-        public Dictionary<string, int> tovari = new Dictionary< string, int>();
+        public Dictionary&lt;string, int&gt; tovari = new Dictionary&lt;string, int&gt;();
 
 
 
     }
 }
-
-</code></pre>
+                      </code></pre>
                     </div>
 
                     <div class="mt24 mb12">

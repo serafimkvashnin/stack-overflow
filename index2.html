@@ -6281,7 +6281,7 @@ namespace Task_1
                   <div class="postcell post-layout--right">
                     <div class="s-prose js-post-body" itemprop="text">
                       <p>Код для Form1.cs</p>
-<pre><code>
+                      <pre><code>
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text.Json;
 
@@ -6289,7 +6289,7 @@ namespace Task2
 {
     public partial class Form1 : Form
     {
-        List<Patient> patients = new List<Patient>();
+        List&lt;Patient&gt; patients = new List&lt;Patient&gt;();
         public Form1()
         {
             InitializeComponent();
@@ -6302,7 +6302,7 @@ namespace Task2
                 using (BinaryReader reader = new BinaryReader(File.Open("Patient.dat", FileMode.Open)))
                 {
                     int count = reader.ReadInt32();
-                    for (int i = 0; i < count; i++)
+                    for (int i = 0; i &lt; count; i++)
                     {
                         Patient p = new Patient
                         {
@@ -6375,24 +6375,24 @@ namespace Task2
 }
 
 </code></pre>
-<p>Код для Form1.Designer.cs</p>
-<pre><code>
+                      <p>Код для Form1.Designer.cs</p>
+                      <pre><code>
 ﻿namespace Task2
 {
     partial class Form1
     {
-        /// <summary>
+        /// &lt;summary&gt;
         ///  Required designer variable.
-        /// </summary>
+        /// &lt;/summary&gt;
         private System.ComponentModel.IContainer components = null;
 
-        /// <summary>
+        /// &lt;summary&gt;
         ///  Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        /// &lt;/summary&gt;
+        /// &lt;param name="disposing"&gt;true if managed resources should be disposed; otherwise, false.&lt;/param&gt;
         protected override void Dispose(bool disposing)
         {
-            if (disposing && (components != null))
+            if (disposing &amp;&amp; (components != null))
             {
                 components.Dispose();
             }
@@ -6401,10 +6401,10 @@ namespace Task2
 
         #region Windows Form Designer generated code
 
-        /// <summary>
+        /// &lt;summary&gt;
         ///  Required method for Designer support - do not modify
         ///  the contents of this method with the code editor.
-        /// </summary>
+        /// &lt;/summary&gt;
         private void InitializeComponent()
         {
             textBox1 = new TextBox();
@@ -6667,8 +6667,8 @@ namespace Task2
 }
 
 </code></pre>
-<p>Код для Patient.cs</p>
-<pre><code>
+                      <p>Код для Patient.cs</p>
+                      <pre><code>
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;

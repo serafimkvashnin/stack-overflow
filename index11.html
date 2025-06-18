@@ -6,10 +6,7 @@
   lang="ru"
 >
   <head>
-    <title>
-      c# - C# Make dish app (11) - Stack Overflow на
-      русском
-    </title>
+    <title>c# - C# Make dish app (11) - Stack Overflow на русском</title>
     <link
       rel="shortcut icon"
       href="https://cdn.sstatic.net/Sites/ru/Img/favicon.ico?v=92117f9cb35c"
@@ -6282,7 +6279,7 @@ namespace Task_1
                   <div class="postcell post-layout--right">
                     <div class="s-prose js-post-body" itemprop="text">
                       <p>Код для Form1.cs</p>
-<pre><code>
+                      <pre><code>
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -6298,9 +6295,9 @@ namespace AnyaTask11
 {
     public partial class Form1 : Form
     {
-        public List<Product> products = new List<Product>();
+        public List&lt;Product&gt; products = new List&lt;Product&gt;();
 
-        public List<Ingridient> Ingridients = new List<Ingridient>();
+        public List&lt;Ingridient&gt; Ingridients = new List&lt;Ingridient&gt;();
 
         private double b = 0;
         private double j = 0;
@@ -6376,7 +6373,7 @@ namespace AnyaTask11
 
         private void button4_Click(object sender, EventArgs e)
         {
-            if (double.TryParse(textBox4.Text, out double gramm) && gramm > 0 && listBox1.SelectedItem is Product product)
+            if (double.TryParse(textBox4.Text, out double gramm) &amp;&amp; gramm &gt; 0 &amp;&amp; listBox1.SelectedItem is Product product)
             {
                 Ingridient ingridient = new Ingridient();
                 ingridient.Product = product;
@@ -6470,24 +6467,24 @@ namespace AnyaTask11
 }
 
 </code></pre>
-<p>Код для Form1.Designer.cs</p>
-<pre><code>
+                      <p>Код для Form1.Designer.cs</p>
+                      <pre><code>
 ﻿namespace AnyaTask11
 {
     partial class Form1
     {
-        /// <summary>
+        /// &lt;summary&gt;
         /// Required designer variable.
-        /// </summary>
+        /// &lt;/summary&gt;
         private System.ComponentModel.IContainer components = null;
 
-        /// <summary>
+        /// &lt;summary&gt;
         /// Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        /// &lt;/summary&gt;
+        /// &lt;param name="disposing"&gt;true if managed resources should be disposed; otherwise, false.&lt;/param&gt;
         protected override void Dispose(bool disposing)
         {
-            if (disposing && (components != null))
+            if (disposing &amp;&amp; (components != null))
             {
                 components.Dispose();
             }
@@ -6496,10 +6493,10 @@ namespace AnyaTask11
 
         #region Windows Form Designer generated code
 
-        /// <summary>
+        /// &lt;summary&gt;
         /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
-        /// </summary>
+        /// &lt;/summary&gt;
         private void InitializeComponent()
         {
             this.listBox1 = new System.Windows.Forms.ListBox();
@@ -6877,8 +6874,8 @@ namespace AnyaTask11
 
 
 </code></pre>
-<p>Код для Ingridient.cs</p>
-<pre><code>
+                      <p>Код для Ingridient.cs</p>
+                      <pre><code>
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6900,8 +6897,8 @@ namespace AnyaTask11
 }
 
 </code></pre>
-<p>Код для Product.cs</p>
-<pre><code>
+                      <p>Код для Product.cs</p>
+                      <pre><code>
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6925,7 +6922,6 @@ namespace AnyaTask11
 }
 
 </code></pre>
-
                     </div>
 
                     <div class="mt24 mb12">
